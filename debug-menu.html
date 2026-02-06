@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Debug Character Sheet</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+        body {
+            background-color: #2a2419;
+            color: #e8dcc4;
+            font-family: Arial, sans-serif;
+            padding: 20px;
+        }
+        
+        #debug-info {
+            position: fixed;
+            top: 80px;
+            right: 20px;
+            background: #3d3325;
+            border: 2px solid #8b7355;
+            padding: 15px;
+            max-width: 300px;
+            border-radius: 8px;
+            z-index: 10000;
+        }
+        
+        #menu {
+            position: fixed;
+            top: 16px;
+            left: 16px;
+            height: 55px;
+            width: 55px;
+            background-color: #5a4d3a;
+            border: 2px solid #8b7355;
+            color: #f4e4bc;
+            font-size: 24px;
+            cursor: pointer;
+            z-index: 9999;
+            border-radius: 4px;
+        }
+        
+        #sidebar {
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: 200px;
+            height: 100%;
+            background-color: #3d3325;
+            border-right: 2px solid #8b7355;
+            display: none;
+            z-index: 9998;
+            padding: 20px;
+        }
+        
+        .log-entry {
+            margin: 5px 0;
+            padding: 5px;
+            background: #2a2419;
+            border-radius: 3px;
+            font-size: 12px;
+        }
+        
+        .success { color: #4CAF50; }
+        .error { color: #f44336; }
+        .info { color: #2196F3; }
+    </style>
+</head>
+<body>
+    <div id="debug-info">
+        <h3 style="margin-top: 0;">Debug Console</h3>
+        <div id="log"></div>
+    </div>
+    
+    <button id="menu" onclick="testClick()">☰</button>
+    
+    <div id="sidebar">
+        <button onclick="w3_close()" style="background: #5a4d3a; color: #e8dcc4; border: 1px solid #6b5d47; padding: 10px; cursor: pointer;">Close ×</button>
+        <h3>Sidebar Opened!</h3>
+    </div>
+    
+    <h1>Hamburger Menu Debug</h1>
+    <p>Click the ☰ button. Watch the debug info on the right.</p>
+    
+    <script>
+        // Logging function
+        function log(message, type = 'info') {
+            const logDiv = document.getElementById('log');
+            const entry = document.createElement('div');
+            entry.className = 'log-entry ' + type;
+            entry.textContent = new Date().toLocaleTimeString() + ': ' + message;
+            logDiv.insertBefore(entry, logDiv.firstChild);
+            console.log(message);
+        }
+        
+        // Test if this function is defined
+        log('Script loaded successfully', 'success');
+        
+        function testClick() {
+            log('Button clicked!', 'success');
+            try {
+                w3_open();
+                log('w3_open() called successfully', 'success');
+            } catch (e) {
+                log('Error calling w3_open(): ' + e.message, 'error');
+            }
+        }
+        
+        function w3_open() {
+            log('w3_open() function executing', 'info');
+            const sidebar = document.getElementById("sidebar");
+            if (sidebar) {
+                sidebar.style.display = "block";
+                log('Sidebar display set to block', 'success');
+            } else {
+                log('Sidebar element not found!', 'error');
+            }
+        }
+        
+        function w3_close() {
+            log('w3_close() called', 'info');
+            document.getElementById("sidebar").style.display = "none";
+            log('Sidebar closed', 'success');
+        }
+        
+        // Check if menu button exists
+        window.onload = function() {
+            const menuBtn = document.getElementById('menu');
+            if (menuBtn) {
+                log('Menu button found: ' + menuBtn.id, 'success');
+                log('Button z-index: ' + window.getComputedStyle(menuBtn).zIndex, 'info');
+                log('Button position: ' + window.getComputedStyle(menuBtn).position, 'info');
+            } else {
+                log('Menu button NOT found!', 'error');
+            }
+            
+            const sidebar = document.getElementById('sidebar');
+            if (sidebar) {
+                log('Sidebar found', 'success');
+            } else {
+                log('Sidebar NOT found!', 'error');
+            }
+        };
+    </script>
+</body>
+</html>
