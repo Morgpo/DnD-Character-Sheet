@@ -967,15 +967,6 @@ td {
     box-shadow: 0 4px 12px var(--shadow-dark) !important;
 }
 
-#lock {
-    color: var(--text-accent);
-    font-weight: bold;
-}
-
-#lock.unlocked {
-    color: var(--highlight-gold);
-}
-
 /* Scrollbar styling for webkit browsers */
 ::-webkit-scrollbar {
     width: 12px;

@@ -1,8 +1,43 @@
 function loadNewSheet(argument) {
-    location.reload();
+    // Confirm before reloading as this will overwrite all current data
+    var confirmMessage = 'WARNING: Reloading the sheet will replace ALL current data with the saved sheet from the file.\n\nDo you want to continue?';
+    
+    if (confirm(confirmMessage)) {
+        // Ask if they want to download a backup first
+        var backupMessage = 'Would you like to download a backup of your current sheet before reloading?';
+        
+        if (confirm(backupMessage)) {
+            // Download backup, clear autosave, then reload
+            saveSheet();
+            // Give a moment for the download to start
+            setTimeout(function() {
+                // Clear autosave so we load from savedSheet.json
+                localStorage.removeItem('dnd_character_sheet_autosave');
+                localStorage.removeItem('dnd_character_sheet_autosave_timestamp');
+                location.reload();
+            }, 500);
+        } else {
+            // Clear autosave so we load from savedSheet.json, then reload
+            localStorage.removeItem('dnd_character_sheet_autosave');
+            localStorage.removeItem('dnd_character_sheet_autosave_timestamp');
+            location.reload();
+        }
+    }
 }
 
 $(document).ready(function(argument) {
+
+    // Check for autosaved data in localStorage first
+    var autoSavedData = localStorage.getItem('dnd_character_sheet_autosave');
+    if (autoSavedData) {
+        try {
+            loadJson = JSON.parse(autoSavedData);
+            console.log('Loaded autosaved data from localStorage');
+        } catch (error) {
+            console.error('Failed to parse autosaved data:', error);
+            // Keep using the default loadJson from savedSheet.json
+        }
+    }
 
     //Change the title to the character name
     if (loadJson.page1.basic_info.char_name)

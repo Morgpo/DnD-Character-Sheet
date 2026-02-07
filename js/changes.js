@@ -1,18 +1,3 @@
-var LOCKED = false;
-
-function lock(argument) {
-    LOCKED = !LOCKED;
-    if (LOCKED)
-        $('#menu-options #lock').text('Locked');
-    else
-        $('#menu-options #lock').text('Unlocked');
-
-    $('#menu-options #lock').toggleClass('locked');
-    $('#menu-options #lock').toggleClass('unlocked');
-}
-
-
-
 function updateMod(att, score) {
     var value = '';
     switch (parseInt(score)) {
@@ -621,9 +606,6 @@ function updateSpellSlots(total) {
 $('document').ready(function(argument) {
     //Run when strength changes
     $('#attributes input[name="str"]').on('input', function(argument) {
-        if (LOCKED)
-            return;
-
         updateMod('str', $('#attributes input[name="str"]').val());
         updateStrSkills();
         updateStrMisc();
@@ -631,9 +613,6 @@ $('document').ready(function(argument) {
 
     //Run when dexterity changes
     $('#attributes input[name="dex"]').on('input', function(argument) {
-        if (LOCKED)
-            return;
-
         updateMod('dex', $('#attributes input[name="dex"]').val());
         updateDexSkills();
         updateDexMisc();
@@ -641,26 +620,17 @@ $('document').ready(function(argument) {
 
     //Run when constitution changes
     $('#attributes input[name="con"]').on('input', function(argument) {
-        if (LOCKED)
-            return;
-
         updateMod('con', $('#attributes input[name="con"]').val());
     });
 
     //Run when intelligence changes
     $('#attributes input[name="int"]').on('input', function(argument) {
-        if (LOCKED)
-            return;
-
         updateMod('int', $('#attributes input[name="int"]').val());
         updateIntSkills();
     });
 
     //Run when wisdom changes
     $('#attributes input[name="wis"]').on('input', function(argument) {
-        if (LOCKED)
-            return;
-
         updateMod('wis', $('#attributes input[name="wis"]').val());
         updateWisSkills();
         updateWisMisc();
@@ -668,27 +638,18 @@ $('document').ready(function(argument) {
 
     //Run when charisma changes
     $('#attributes input[name="cha"]').on('input', function(argument) {
-        if (LOCKED)
-            return;
-
         updateMod('cha', $('#attributes input[name="cha"]').val());
         updateChaSkills();
     });
 
     //Run misc att changes
     $('#attributes input').on('input', function(argument) {
-        if (LOCKED)
-            return;
-
         updateSaves();
         updateSpells();
     });
 
     //Run when proficience changes
     $('#top-bar input[name="proficiency"]').on('input', function(argument) {
-        if (LOCKED)
-            return;
-
         updateStrSkills();
         updateStrMisc();
         updateDexSkills();
@@ -704,9 +665,6 @@ $('document').ready(function(argument) {
     //Run save prof changes
     $('#saves input[name="prof"]').each(function(index) {
         $(this).change(function(argument) {
-            if (LOCKED)
-                return;
-
             updateSaves();
         });
     });
@@ -714,9 +672,6 @@ $('document').ready(function(argument) {
     //Run skill prof/exp changes
     $('#skills input[name="prof"]').each(function(index) {
         $(this).change(function(argument) {
-            if (LOCKED)
-                return;
-
             updateStrSkills();
             updateStrMisc();
             updateDexSkills();
@@ -730,9 +685,6 @@ $('document').ready(function(argument) {
 
     $('#skills input[name="expr"]').each(function(index) {
         $(this).change(function(argument) {
-            if (LOCKED)
-                return;
-
             updateStrSkills();
             updateStrMisc();
             updateDexSkills();
@@ -746,18 +698,12 @@ $('document').ready(function(argument) {
 
     //Run misc changes
     $('#saves-skills select[name="spell-att"]').change(function(argument) {
-        if (LOCKED)
-            return;
-
         updateSpells();
     });
 
     //Run weight changes
     $('#equipment input[name="weight"]').each(function(argument) {
         $(this).keyup(function(argument) {
-            if (LOCKED)
-                return;
-
             calculateTotalWeight();
         });
     });
@@ -765,26 +711,17 @@ $('document').ready(function(argument) {
     //Run currency changes
     $('#equipment #currancy input:not([name="total"])').each(function(argument) {
         $(this).keyup(function(argument) {
-            if (LOCKED)
-                return;
-
             calculateTotalCurrency();
         });
     });
 
     $('#equipment #currancy select[name="base"]').change(function(argument) {
-        if (LOCKED)
-            return;
-
         calculateTotalCurrency();
     });
 
     //Update Spell Slots
     $('#spells #total-slots input').each(function(argument) {
         $(this).keyup(function(argument) {
-            if (LOCKED)
-                return;
-
             updateSpellSlots($(this));
         });
     });
