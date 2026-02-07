@@ -64,6 +64,14 @@ function getSpells(spellLevel) {
     return spells
 }
 
+function getSpellSlots(level) {
+    var slots = [];
+    $('#page-3 #spells #level-' + level + ' #slots input[type="checkbox"]').each(function() {
+        slots.push($(this).prop('checked'));
+    });
+    return slots;
+}
+
 function saveSheet(argument) {
 
     var sheet = {
@@ -347,39 +355,48 @@ function saveSheet(argument) {
                 },
                 level_1: {
                     total: $('#page-3 #spells input[name="total-1"]').val(),
-                    spells: getSpells('level-1')
+                    spells: getSpells('level-1'),
+                    slots: getSpellSlots(1)
                 },
                 level_2: {
                     total: $('#page-3 #spells input[name="total-2"]').val(),
-                    spells: getSpells('level-2')
+                    spells: getSpells('level-2'),
+                    slots: getSpellSlots(2)
                 },
                 level_3: {
                     total: $('#page-3 #spells input[name="total-3"]').val(),
-                    spells: getSpells('level-3')
+                    spells: getSpells('level-3'),
+                    slots: getSpellSlots(3)
                 },
                 level_4: {
                     total: $('#page-3 #spells input[name="total-4"]').val(),
-                    spells: getSpells('level-4')
+                    spells: getSpells('level-4'),
+                    slots: getSpellSlots(4)
                 },
                 level_5: {
                     total: $('#page-3 #spells input[name="total-5"]').val(),
-                    spells: getSpells('level-5')
+                    spells: getSpells('level-5'),
+                    slots: getSpellSlots(5)
                 },
                 level_6: {
                     total: $('#page-3 #spells input[name="total-6"]').val(),
-                    spells: getSpells('level-6')
+                    spells: getSpells('level-6'),
+                    slots: getSpellSlots(6)
                 },
                 level_7: {
                     total: $('#page-3 #spells input[name="total-7"]').val(),
-                    spells: getSpells('level-7')
+                    spells: getSpells('level-7'),
+                    slots: getSpellSlots(7)
                 },
                 level_8: {
                     total: $('#page-3 #spells input[name="total-8"]').val(),
-                    spells: getSpells('level-8')
+                    spells: getSpells('level-8'),
+                    slots: getSpellSlots(8)
                 },
                 level_9: {
                     total: $('#page-3 #spells input[name="total-9"]').val(),
-                    spells: getSpells('level-9')
+                    spells: getSpells('level-9'),
+                    slots: getSpellSlots(9)
                 }
             }
         },

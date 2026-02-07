@@ -38,6 +38,7 @@
     <script type="text/javascript" src="js/changes.js"></script>
     <script type="text/javascript" src="js/add-attack.js"></script>
     <script type="text/javascript" src="js/save.js"></script>
+    <script type="text/javascript" src="js/autosave.js"></script>
     <script type="text/javascript" src="js/load.js"></script>
     <script type="text/javascript" src="js/app.js"></script>
 </head>
@@ -63,8 +64,9 @@
         <div class="w3-dropdown-hover">
             <button class="w3-button w3-hover-blue-gray">Options <i class="fa fa-caret-down"></i></button>
             <div id="menu-options" class="w3-dropdown-content w3-bar-block w3-animate-right">
-                <a href="#" class="w3-bar-item w3-button w3-hover-blue-gray" onclick="loadNewSheet(); w3_close()">Load Save</a>
-                <a href="#" class="w3-bar-item w3-button w3-hover-blue-gray" onclick="saveSheet(); w3_close()">Save Sheet</a>
+                <a href="#" class="w3-bar-item w3-button w3-hover-blue-gray" onclick="loadNewSheet(); w3_close()">Reload Sheet</a>
+                <a href="#" class="w3-bar-item w3-button w3-hover-blue-gray" onclick="saveSheet(); w3_close()">Download Backup</a>
+                <a href="#" class="w3-bar-item w3-button w3-hover-blue-gray" onclick="clearAutoSave(); w3_close()">Clear Auto-Save</a>
                 <a href="#" class="w3-bar-item w3-button w3-hover-blue-gray" onclick="lock()">Lock/Unlock Sheet</a>
                 <div id="lock" class="unlocked w3-padding">Unlocked</div>
             </div>
@@ -72,6 +74,9 @@
         <div class="info w3-margin-top w3-border-top">
             <div class="label">Info & Help</div>
             <div class="w3-margin-top"><span class="auto-filled-border w3-round">Alt Color</span> = Auto-Filled</div>
+            <div class="w3-margin-top" style="font-size: 0.85em;">
+                <strong>Auto-Save:</strong> Changes are automatically saved to your browser every second.
+            </div>
         </div>
     </div>
     <!-- Sidebar Button -->
@@ -274,8 +279,10 @@
                             <span class="sub-label">Failure</span>
                             <div id="failure-num">
                                 <input class="w3-check" type="checkbox" name="failure-1" />
+                                <!--
                                 <input class="w3-check" type="checkbox" name="failure-2" />
                                 <input class="w3-check" type="checkbox" name="failure-3" />
+                                -->
                             </div>
                         </div>
                     </div>
@@ -534,6 +541,7 @@
                 <div id="charges" class="w3-padding w3-animate-opacity">
                     <div id="charge-1" class="w3-col w3-padding m8 l8">
                         <input type="text" name="charge-1" />
+                        <input type="text" class="charge-max" maxlength="2" size="2" placeholder="Max" title="Max charges (leave empty for 10)" />
                         <input type="checkbox" name="1" />
                         <input type="checkbox" name="2" />
                         <input type="checkbox" name="3" />
@@ -551,6 +559,7 @@
                     </div>
                     <div id="charge-2" class="w3-col w3-padding m8 l8">
                         <input type="text" name="charge-2" />
+                        <input type="text" class="charge-max" maxlength="2" size="2" placeholder="Max" title="Max charges (leave empty for 10)" />
                         <input type="checkbox" name="1" />
                         <input type="checkbox" name="2" />
                         <input type="checkbox" name="3" />
@@ -568,6 +577,7 @@
                     </div>
                     <div id="charge-3" class="w3-col w3-padding m8 l8">
                         <input type="text" name="charge-3" />
+                        <input type="text" class="charge-max" maxlength="2" size="2" placeholder="Max" title="Max charges (leave empty for 10)" />
                         <input type="checkbox" name="1" />
                         <input type="checkbox" name="2" />
                         <input type="checkbox" name="3" />
@@ -585,6 +595,7 @@
                     </div>
                     <div id="charge-4" class="w3-col w3-padding m8 l8">
                         <input type="text" name="charge-4" />
+                        <input type="text" class="charge-max" maxlength="2" size="2" placeholder="Max" title="Max charges (leave empty for 10)" />
                         <input type="checkbox" name="1" />
                         <input type="checkbox" name="2" />
                         <input type="checkbox" name="3" />
@@ -602,6 +613,7 @@
                     </div>
                     <div id="charge-5" class="w3-col w3-padding m8 l8">
                         <input type="text" name="charge-5" />
+                        <input type="text" class="charge-max" maxlength="2" size="2" placeholder="Max" title="Max charges (leave empty for 10)" />
                         <input type="checkbox" name="1" />
                         <input type="checkbox" name="2" />
                         <input type="checkbox" name="3" />
@@ -619,6 +631,7 @@
                     </div>
                     <div id="charge-6" class="w3-col w3-padding m8 l8">
                         <input type="text" name="charge-6" />
+                        <input type="text" class="charge-max" maxlength="2" size="2" placeholder="Max" title="Max charges (leave empty for 10)" />
                         <input type="checkbox" name="1" />
                         <input type="checkbox" name="2" />
                         <input type="checkbox" name="3" />

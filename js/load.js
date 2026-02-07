@@ -277,6 +277,11 @@ $(document).ready(function(argument) {
         $('#page-3 #spells #level-1 .spells .spell:nth-child(' + child + ') input[name="preped"]').prop("checked", value.preped);
         $('#page-3 #spells #level-1 .spells .spell:nth-child(' + child + ') input[name="spell-name"]').val(value.spell_name);
     });
+    if (loadJson.page3.spells.level_1.slots) {
+        $.each(loadJson.page3.spells.level_1.slots, function(index, checked) {
+            $('#page-3 #spells #level-1 #slots input[type="checkbox"]').eq(index).prop('checked', checked);
+        });
+    }
 
 
     $('#page-3 #spells #level-2 input[name="total-2"]').val(loadJson.page3.spells.level_2.total);
@@ -287,6 +292,11 @@ $(document).ready(function(argument) {
         $('#page-3 #spells #level-2 .spells .spell:nth-child(' + child + ') input[name="preped"]').prop("checked", value.preped);
         $('#page-3 #spells #level-2 .spells .spell:nth-child(' + child + ') input[name="spell-name"]').val(value.spell_name);
     });
+    if (loadJson.page3.spells.level_2.slots) {
+        $.each(loadJson.page3.spells.level_2.slots, function(index, checked) {
+            $('#page-3 #spells #level-2 #slots input[type="checkbox"]').eq(index).prop('checked', checked);
+        });
+    }
 
 
     $('#page-3 #spells #level-3 input[name="total-3"]').val(loadJson.page3.spells.level_3.total);
@@ -297,6 +307,11 @@ $(document).ready(function(argument) {
         $('#page-3 #spells #level-3 .spells .spell:nth-child(' + child + ') input[name="preped"]').prop("checked", value.preped);
         $('#page-3 #spells #level-3 .spells .spell:nth-child(' + child + ') input[name="spell-name"]').val(value.spell_name);
     });
+    if (loadJson.page3.spells.level_3.slots) {
+        $.each(loadJson.page3.spells.level_3.slots, function(index, checked) {
+            $('#page-3 #spells #level-3 #slots input[type="checkbox"]').eq(index).prop('checked', checked);
+        });
+    }
 
 
     $('#page-3 #spells #level-4 input[name="total-4"]').val(loadJson.page3.spells.level_4.total);
@@ -307,6 +322,11 @@ $(document).ready(function(argument) {
         $('#page-3 #spells #level-4 .spells .spell:nth-child(' + child + ') input[name="preped"]').prop("checked", value.preped);
         $('#page-3 #spells #level-4 .spells .spell:nth-child(' + child + ') input[name="spell-name"]').val(value.spell_name);
     });
+    if (loadJson.page3.spells.level_4.slots) {
+        $.each(loadJson.page3.spells.level_4.slots, function(index, checked) {
+            $('#page-3 #spells #level-4 #slots input[type="checkbox"]').eq(index).prop('checked', checked);
+        });
+    }
 
 
     $('#page-3 #spells #level-5 input[name="total-5"]').val(loadJson.page3.spells.level_5.total);
@@ -317,6 +337,11 @@ $(document).ready(function(argument) {
         $('#page-3 #spells #level-5 .spells .spell:nth-child(' + child + ') input[name="preped"]').prop("checked", value.preped);
         $('#page-3 #spells #level-5 .spells .spell:nth-child(' + child + ') input[name="spell-name"]').val(value.spell_name);
     });
+    if (loadJson.page3.spells.level_5.slots) {
+        $.each(loadJson.page3.spells.level_5.slots, function(index, checked) {
+            $('#page-3 #spells #level-5 #slots input[type="checkbox"]').eq(index).prop('checked', checked);
+        });
+    }
 
 
     $('#page-3 #spells #level-6 input[name="total-6"]').val(loadJson.page3.spells.level_6.total);
@@ -327,6 +352,11 @@ $(document).ready(function(argument) {
         $('#page-3 #spells #level-6 .spells .spell:nth-child(' + child + ') input[name="preped"]').prop("checked", value.preped);
         $('#page-3 #spells #level-6 .spells .spell:nth-child(' + child + ') input[name="spell-name"]').val(value.spell_name);
     });
+    if (loadJson.page3.spells.level_6.slots) {
+        $.each(loadJson.page3.spells.level_6.slots, function(index, checked) {
+            $('#page-3 #spells #level-6 #slots input[type="checkbox"]').eq(index).prop('checked', checked);
+        });
+    }
 
 
     $('#page-3 #spells #level-7 input[name="total-7"]').val(loadJson.page3.spells.level_7.total);
@@ -337,6 +367,11 @@ $(document).ready(function(argument) {
         $('#page-3 #spells #level-7 .spells .spell:nth-child(' + child + ') input[name="preped"]').prop("checked", value.preped);
         $('#page-3 #spells #level-7 .spells .spell:nth-child(' + child + ') input[name="spell-name"]').val(value.spell_name);
     });
+    if (loadJson.page3.spells.level_7.slots) {
+        $.each(loadJson.page3.spells.level_7.slots, function(index, checked) {
+            $('#page-3 #spells #level-7 #slots input[type="checkbox"]').eq(index).prop('checked', checked);
+        });
+    }
 
 
     $('#page-3 #spells #level-8 input[name="total-8"]').val(loadJson.page3.spells.level_8.total);
@@ -347,6 +382,11 @@ $(document).ready(function(argument) {
         $('#page-3 #spells #level-8 .spells .spell:nth-child(' + child + ') input[name="preped"]').prop("checked", value.preped);
         $('#page-3 #spells #level-8 .spells .spell:nth-child(' + child + ') input[name="spell-name"]').val(value.spell_name);
     });
+    if (loadJson.page3.spells.level_8.slots) {
+        $.each(loadJson.page3.spells.level_8.slots, function(index, checked) {
+            $('#page-3 #spells #level-8 #slots input[type="checkbox"]').eq(index).prop('checked', checked);
+        });
+    }
 
 
     $('#page-3 #spells #level-9 input[name="total-9"]').val(loadJson.page3.spells.level_9.total);
@@ -357,6 +397,11 @@ $(document).ready(function(argument) {
         $('#page-3 #spells #level-9 .spells .spell:nth-child(' + child + ') input[name="preped"]').prop("checked", value.preped);
         $('#page-3 #spells #level-9 .spells .spell:nth-child(' + child + ') input[name="spell-name"]').val(value.spell_name);
     });
+    if (loadJson.page3.spells.level_9.slots) {
+        $.each(loadJson.page3.spells.level_9.slots, function(index, checked) {
+            $('#page-3 #spells #level-9 #slots input[type="checkbox"]').eq(index).prop('checked', checked);
+        });
+    }
 
 
 
