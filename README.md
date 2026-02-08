@@ -1,5 +1,5 @@
 ### Credits:
-This project was forked from [here](https://github.com/Chee32/5e-Character-Sheet) and has been modified to include additional features and improvements. The original project was created by [@Chee32](https://github.com/Chee32), and some other enhancements were made by [@lckynmbrsvn](https://github.com/lckynmbrsvn).
+This original project was forked from [here](https://github.com/Chee32/5e-Character-Sheet) and was created by [@Chee32](https://github.com/Chee32) and [@lckynmbrsvn](https://github.com/lckynmbrsvn). 
 
 ---
 
