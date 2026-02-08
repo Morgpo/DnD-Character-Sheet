@@ -202,38 +202,7 @@ function autoSaveSheet() {
                     languages: $('#page-1 #proficiencies #languages textarea[name="languages"]').val()
                 },
                 attacks_spells: getAttacks(),
-                charges: {
-                    charge_1: {
-                        name: $('#page-1 #charges input[name="charge-1"]').val(),
-                        max: $('#page-1 #charges #charge-1 input.charge-max').val(),
-                        total: getCharges(1)
-                    },
-                    charge_2: {
-                        name: $('#page-1 #charges input[name="charge-2"]').val(),
-                        max: $('#page-1 #charges #charge-2 input.charge-max').val(),
-                        total: getCharges(2)
-                    },
-                    charge_3: {
-                        name: $('#page-1 #charges input[name="charge-3"]').val(),
-                        max: $('#page-1 #charges #charge-3 input.charge-max').val(),
-                        total: getCharges(3)
-                    },
-                    charge_4: {
-                        name: $('#page-1 #charges input[name="charge-4"]').val(),
-                        max: $('#page-1 #charges #charge-4 input.charge-max').val(),
-                        total: getCharges(4)
-                    },
-                    charge_5: {
-                        name: $('#page-1 #charges input[name="charge-5"]').val(),
-                        max: $('#page-1 #charges #charge-5 input.charge-max').val(),
-                        total: getCharges(5)
-                    },
-                    charge_6: {
-                        name: $('#page-1 #charges input[name="charge-6"]').val(),
-                        max: $('#page-1 #charges #charge-6 input.charge-max').val(),
-                        total: getCharges(6)
-                    }
-                },
+                charges: getCharges(),
                 features: $('#page-1 #features textarea[name="features"]').val()
             },
             page2: {

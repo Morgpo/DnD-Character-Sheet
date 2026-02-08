@@ -37,6 +37,7 @@
     <script type="text/javascript" src="js/extra.js"></script>
     <script type="text/javascript" src="js/changes.js"></script>
     <script type="text/javascript" src="js/add-attack.js"></script>
+    <script type="text/javascript" src="js/add-charge.js"></script>
     <script type="text/javascript" src="js/save.js"></script>
     <script type="text/javascript" src="js/autosave.js"></script>
     <script type="text/javascript" src="js/load.js"></script>
@@ -64,16 +65,25 @@
         <div class="w3-dropdown-hover">
             <button class="w3-button w3-hover-blue-gray">Options <i class="fa fa-caret-down"></i></button>
             <div id="menu-options" class="w3-dropdown-content w3-bar-block w3-animate-right">
-                <a href="#" class="w3-bar-item w3-button w3-hover-blue-gray" onclick="loadNewSheet(); w3_close()">Reload Sheet</a>
-                <a href="#" class="w3-bar-item w3-button w3-hover-blue-gray" onclick="saveSheet(); w3_close()">Download Backup</a>
                 <a href="#" class="w3-bar-item w3-button w3-hover-blue-gray" onclick="clearSheet(); w3_close()">Clear Sheet</a>
+                <a href="#" class="w3-bar-item w3-button w3-hover-blue-gray" onclick="saveSheet(); w3_close()">Save Backup</a>
+                <a href="#" class="w3-bar-item w3-button w3-hover-blue-gray" onclick="loadNewSheet(); w3_close()">Load Backup</a>
             </div>
         </div>
         <div class="info w3-margin-top w3-border-top">
             <div class="label">Info & Help</div>
-            <div class="w3-margin-top"><span class="auto-filled-border w3-round">Alt Color</span> = Auto-Filled</div>
+            <div class="w3-margin-top"><span class="auto-filled-example w3-round">Alt Color</span> = Auto-Filled</div>
             <div class="w3-margin-top" style="font-size: 0.85em;">
-                <strong>Auto-Save:</strong> Changes are automatically saved to your browser every second.
+                <strong>Auto-Save:</strong> Your changes are saved locally in your browser every second. No need for internet nor manual saving!
+            </div>
+            <div class="w3-margin-top" style="font-size: 0.85em;">
+                <strong>Clear Sheet:</strong> Clears everything to create a brand new character. All your current data will be deleted.
+            </div>
+            <div class="w3-margin-top" style="font-size: 0.85em;">
+                <strong>Save Backup:</strong> Saves your current character to a JSON file. Use this to create a backup that you can reload later.
+            </div>
+            <div class="w3-margin-top" style="font-size: 0.85em;">
+                <strong>Load Backup:</strong> Loads a character from your savedSheet.json file. Use this to restore a backup or load a character on a new browser/machine.
             </div>
         </div>
     </div>
@@ -533,9 +543,12 @@
             </div>
             <!-- Charges, Ammo, Resources -->
             <div id="charges" class="w3-col w3-card w3-round w3-margin-bottom m12 l8">
-                <button class="expando w3-button w3-bar-block w3-left-align w3-blue-gray">Class Resources, Ammo, & Charges</button>
-                    <div id="charge-1" class="w3-col w3-padding">
-                        <input type="text" name="charge-1" placeholder="Name" />
+                <button class="expando w3-button w3-bar-block w3-left-align w3-blue-gray">Class Resources & Item Charges</button>
+                <div id="charges-container" class="w3-padding w3-animate-opacity">
+                    <div class="charge-row w3-col w3-padding">
+                        <button class="button move-up w3-button w3-blue-gray w3-round-large"><i class="fa fa-arrow-up"></i></button>
+                        <button class="button move-down w3-button w3-blue-gray w3-round-large"><i class="fa fa-arrow-down"></i></button>
+                        <input type="text" class="charge-name" placeholder="Name" />
                         <input type="text" class="charge-max" maxlength="2" size="2" placeholder="Max" title="Max charges (leave empty for 10)" />
                         <button class="button fill w3-button w3-blue-gray w3-round-large">Fill</button>
                         <button class="button empty w3-button w3-blue-gray w3-round-large">Empty</button>
@@ -549,87 +562,12 @@
                         <input type="checkbox" name="8" />
                         <input type="checkbox" name="9" />
                         <input type="checkbox" name="10" />
+                        <button class="button remove-charge w3-button w3-blue-gray w3-round-large"><i class="fa fa-trash"></i></button>
                     </div>
-                    <div id="charge-2" class="w3-col w3-padding">
-                        <input type="text" name="charge-2" placeholder="Name" />
-                        <input type="text" class="charge-max" maxlength="2" size="2" placeholder="Max" title="Max charges (leave empty for 10)" />
-                        <button class="button fill w3-button w3-blue-gray w3-round-large">Fill</button>
-                        <button class="button empty w3-button w3-blue-gray w3-round-large">Empty</button>
-                        <input type="checkbox" name="1" />
-                        <input type="checkbox" name="2" />
-                        <input type="checkbox" name="3" />
-                        <input type="checkbox" name="4" />
-                        <input type="checkbox" name="5" />
-                        <input type="checkbox" name="6" />
-                        <input type="checkbox" name="7" />
-                        <input type="checkbox" name="8" />
-                        <input type="checkbox" name="9" />
-                        <input type="checkbox" name="10" />
+                    <div>
+                        <button id="add-charge-btn" class="w3-button w3-blue-gray w3-round-large">Add Resource</button>
                     </div>
-                    <div id="charge-3" class="w3-col w3-padding">
-                        <input type="text" name="charge-3" placeholder="Name" />
-                        <input type="text" class="charge-max" maxlength="2" size="2" placeholder="Max" title="Max charges (leave empty for 10)" />
-                        <button class="button fill w3-button w3-blue-gray w3-round-large">Fill</button>
-                        <button class="button empty w3-button w3-blue-gray w3-round-large">Empty</button>
-                        <input type="checkbox" name="1" />
-                        <input type="checkbox" name="2" />
-                        <input type="checkbox" name="3" />
-                        <input type="checkbox" name="4" />
-                        <input type="checkbox" name="5" />
-                        <input type="checkbox" name="6" />
-                        <input type="checkbox" name="7" />
-                        <input type="checkbox" name="8" />
-                        <input type="checkbox" name="9" />
-                        <input type="checkbox" name="10" />
-                    </div>
-                    <div id="charge-4" class="w3-col w3-padding">
-                        <input type="text" name="charge-4" placeholder="Name" />
-                        <input type="text" class="charge-max" maxlength="2" size="2" placeholder="Max" title="Max charges (leave empty for 10)" />
-                        <button class="button fill w3-button w3-blue-gray w3-round-large">Fill</button>
-                        <button class="button empty w3-button w3-blue-gray w3-round-large">Empty</button>
-                        <input type="checkbox" name="1" />
-                        <input type="checkbox" name="2" />
-                        <input type="checkbox" name="3" />
-                        <input type="checkbox" name="4" />
-                        <input type="checkbox" name="5" />
-                        <input type="checkbox" name="6" />
-                        <input type="checkbox" name="7" />
-                        <input type="checkbox" name="8" />
-                        <input type="checkbox" name="9" />
-                        <input type="checkbox" name="10" />
-                    </div>
-                    <div id="charge-5" class="w3-col w3-padding">
-                        <input type="text" name="charge-5" placeholder="Name" />
-                        <input type="text" class="charge-max" maxlength="2" size="2" placeholder="Max" title="Max charges (leave empty for 10)" />
-                        <button class="button fill w3-button w3-blue-gray w3-round-large">Fill</button>
-                        <button class="button empty w3-button w3-blue-gray w3-round-large">Empty</button>
-                        <input type="checkbox" name="1" />
-                        <input type="checkbox" name="2" />
-                        <input type="checkbox" name="3" />
-                        <input type="checkbox" name="4" />
-                        <input type="checkbox" name="5" />
-                        <input type="checkbox" name="6" />
-                        <input type="checkbox" name="7" />
-                        <input type="checkbox" name="8" />
-                        <input type="checkbox" name="9" />
-                        <input type="checkbox" name="10" />
-                    </div>
-                    <div id="charge-6" class="w3-col w3-padding">
-                        <input type="text" name="charge-6" placeholder="Name" />
-                        <input type="text" class="charge-max" maxlength="2" size="2" placeholder="Max" title="Max charges (leave empty for 10)" />
-                        <button class="button fill w3-button w3-blue-gray w3-round-large">Fill</button>
-                        <button class="button empty w3-button w3-blue-gray w3-round-large">Empty</button>
-                        <input type="checkbox" name="1" />
-                        <input type="checkbox" name="2" />
-                        <input type="checkbox" name="3" />
-                        <input type="checkbox" name="4" />
-                        <input type="checkbox" name="5" />
-                        <input type="checkbox" name="6" />
-                        <input type="checkbox" name="7" />
-                        <input type="checkbox" name="8" />
-                        <input type="checkbox" name="9" />
-                        <input type="checkbox" name="10" />
-                    </div>
+                </div>
             </div>
             <!-- Attacks -->
             <div class="w3-col w3-margin-bottom l8">
@@ -637,12 +575,25 @@
                 <div id="attacks-spells" class="w3-card w3-padding w3-round w3-animate-opacity">
                     <table id="attacks">
                         <tr>
+                            <th></th>
                             <th>Name</th>
                             <th>Base Stat</th>
                             <th>Bonus/DC</th>
                             <th>Damage</th>
                             <th>Damage Type</th>
+                            <th></th>
                         </tr>
+                        <tbody>
+                            <tr>
+                                <td class="reorder-cell"><button class="button move-up w3-button w3-blue-gray w3-round-large"><i class="fa fa-arrow-up"></i></button><button class="button move-down w3-button w3-blue-gray w3-round-large"><i class="fa fa-arrow-down"></i></button></td>
+                                <td><input type="text" name="name" value=""/></td>
+                                <td><input type="text" name="stat" value=""/></td>
+                                <td><input type="text" name="toHit" value=""/></td>
+                                <td><input type="text" name="damage" value=""/></td>
+                                <td><input type="text" name="damage_type" value=""/></td>
+                                <td><button class="button w3-button w3-blue-gray w3-round-large"><i class="fa fa-trash"></i></button></td>
+                            </tr>
+                        </tbody>
                     </table>
                     <div id="add-attack">
                         <span class="label title">Add a new attack:</span>
@@ -691,7 +642,7 @@
                                 <input type="text" name="dmg-type">
                                 <span class="label">Damage Type</span>
                             </div>
-                            <button class="button w3-button w3-blue-gray w3-round-large" onclick="att_attack()">Add Attack</button>
+                            <button id="add-attack-btn" class="w3-button w3-blue-gray w3-round-large">Add Attack</button>
                         </div>
                     </div>
                 </div>
@@ -704,7 +655,7 @@
             <!-- Equipment -->
             <div class="w3-col w3-margin-bottom w3-card w3-round">
                 <button class="expando w3-button w3-bar-block w3-left-align w3-blue-gray">Inventory</button>
-                <div id="equipment" class="w3-padding w3-animate-opacity">
+                <div id="equipment" class="w3-animate-opacity">
                     <div id="currancy-encumberance" class="col-3 w3-col w3-border l4">
                         <div id="currancy" class="box w3-padding w3-margin w3-border-bottom">
                             <span class="label">Currency</span>
@@ -898,7 +849,7 @@
             <!-- Spell Info -->
             <div class="w3-col w3-margin-bottom w3-card w3-round">
                 <button class="expando w3-button w3-bar-block w3-left-align w3-blue-gray">Spell Info</button>
-                <div id="spell-info" class="w3-padding w3-animate-opacity">
+                <div id="spell-info" class="w3-animate-opacity">
                     <div id="class" class="w3-col w3-padding m6 l3">
                         <div class="input-frame">
                             <input type="text" name="class" />
@@ -936,7 +887,7 @@
             <!-- Spells -->
             <div class="w3-col w3-margin-bottom w3-card w3-round">
                 <button class="expando w3-button w3-bar-block w3-left-align w3-blue-gray">Spells</button>
-                <div id="spells" class="w3-padding w3-animate-opacity">
+                <div id="spells" class="w3-animate-opacity">
                     <div id="cantrips" class="w3-col w3-padding w3-border-bottom">
                         <div class="w3-col">
                             <div>
@@ -1571,7 +1522,7 @@
             <!-- Backstory -->
             <div class="w3-col w3-margin-bottom w3-card w3-round">
                 <button class="expando w3-button w3-bar-block w3-left-align w3-blue-gray">Backstory</button>
-                <div id="character-background" class="w3-padding w3-animate-opacity">
+                <div id="character-background" class="w3-animate-opacity">
                     <div id="backstory" class="w3-col w3-padding m6 l6">
                         <span class="label">Character Backstory</span>
                         <textarea name="backstory" rows="30"></textarea>
@@ -1619,7 +1570,7 @@
         <!-- Footer -->
         <footer class="page-width w3-container w3-content">
             <div class="footer w3-blue-gray w3-round w3-padding">
-                DnD 5<sup>th</sup> Edition Character Sheet || Created by <a href="https://github.com/Chee32" target="_blank">Chee32</a>, <a href="https://github.com/lckynmbrsvn" target="_blank">lckynmbrsvn</a> & <a href="https://github.com/Morgpo" target="_blank">Morgpo</a> ||
+                D&D 5<sup>th</sup> Edition Character Sheet || Created by <a href="https://github.com/Chee32" target="_blank">Chee32</a>, <a href="https://github.com/lckynmbrsvn" target="_blank">lckynmbrsvn</a> & <a href="https://github.com/Morgpo" target="_blank">Morgpo</a> ||
                 <a href="https://github.com/lckynmbrsvn/5e-Character-Sheet" target="_blank">Original GitHub Project</a>
             </div>
         </footer>

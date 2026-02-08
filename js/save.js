@@ -8,20 +8,43 @@ function getAttacks() {
             temp.toHit = $(this).find('input[name="toHit"]').val();
             temp.damage = $(this).find('input[name="damage"]').val();
             temp.damage_type = $(this).find('input[name="damage_type"]').val();
-            attacks.push(temp);
+            
+            // Only save attacks that have at least a name
+            if (temp.name && temp.name.trim() !== '') {
+                attacks.push(temp);
+            }
         }
     });
 
     return attacks;
 }
 
-function getCharges(charge) {
+function getCharges() {
     var charges = [];
-    $('#page-1 #charges #charge-' + charge + ' input[type="checkbox"]').each(function() {
-        if ($(this).prop('checked') == true) {
-            charges.push($(this).prop('name'));
+    $('#charges-container .charge-row').each(function() {
+        var chargeRow = $(this);
+        var checkedBoxes = [];
+        
+        chargeRow.find('input[type="checkbox"]').each(function() {
+            if ($(this).prop('checked') == true) {
+                checkedBoxes.push($(this).prop('name'));
+            }
+        });
+        
+        var chargeName = chargeRow.find('input.charge-name').val();
+        
+        // Only save charges that have a name
+        if (chargeName && chargeName.trim() !== '') {
+            var chargeData = {
+                name: chargeName,
+                max: chargeRow.find('input.charge-max').val(),
+                checked: checkedBoxes
+            };
+            
+            charges.push(chargeData);
         }
     });
+    
     return charges;
 }
 
@@ -262,38 +285,7 @@ function saveSheet(argument) {
                 languages: $('#page-1 #proficiencies #languages textarea[name="languages"]').val()
             },
             attacks_spells: getAttacks(),
-            charges: {
-                charge_1: {
-                    name: $('#page-1 #charges input[name="charge-1"]').val(),
-                    max: $('#page-1 #charges #charge-1 input.charge-max').val(),
-                    total: getCharges(1)
-                },
-                charge_2: {
-                    name: $('#page-1 #charges input[name="charge-2"]').val(),
-                    max: $('#page-1 #charges #charge-2 input.charge-max').val(),
-                    total: getCharges(2)
-                },
-                charge_3: {
-                    name: $('#page-1 #charges input[name="charge-3"]').val(),
-                    max: $('#page-1 #charges #charge-3 input.charge-max').val(),
-                    total: getCharges(3)
-                },
-                charge_4: {
-                    name: $('#page-1 #charges input[name="charge-4"]').val(),
-                    max: $('#page-1 #charges #charge-4 input.charge-max').val(),
-                    total: getCharges(4)
-                },
-                charge_5: {
-                    name: $('#page-1 #charges input[name="charge-5"]').val(),
-                    max: $('#page-1 #charges #charge-5 input.charge-max').val(),
-                    total: getCharges(5)
-                },
-                charge_6: {
-                    name: $('#page-1 #charges input[name="charge-6"]').val(),
-                    max: $('#page-1 #charges #charge-6 input.charge-max').val(),
-                    total: getCharges(6)
-                }
-            },
+            charges: getCharges(),
             features: $('#page-1 #features textarea[name="features"]').val()
         },
         page2: {

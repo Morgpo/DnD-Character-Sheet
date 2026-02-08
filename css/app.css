@@ -15,6 +15,8 @@
     --highlight-amber: #d4a76a;
     --input-bg: #33291f;
     --card-bg: #342b20;
+    --danger-red: #8b3a3a;
+    --danger-red-hover: #a84545;
 }
 
 /* Base Body Styling */
@@ -174,6 +176,17 @@ input[readonly].auto-filled-border,
 input[readonly].auto-filled-border-bottom {
     border-color: var(--highlight-gold) !important;
     box-shadow: 0 2px 6px 0 rgba(201, 169, 97, 0.3), inset 0 1px 2px rgba(0, 0, 0, 0.3) !important;
+}
+
+/* Example bubble to show what auto-filled values look like */
+.auto-filled-example {
+    background-color: var(--parchment-medium) !important;
+    color: var(--highlight-gold) !important;
+    font-weight: 600;
+    opacity: 0.9;
+    border: solid 1px var(--highlight-gold) !important;
+    box-shadow: 0 2px 6px 0 rgba(201, 169, 97, 0.3), inset 0 1px 2px rgba(0, 0, 0, 0.3) !important;
+    padding: 8px;
 }
 
 .info {
@@ -580,6 +593,11 @@ tr {
     color: var(--text-primary);
 }
 
+#attacks-spells #attacks td.reorder-cell {
+    max-width: none;
+    width: 80px;
+}
+
 td {
     display: table-cell;
     vertical-align: inherit;
@@ -967,6 +985,12 @@ td {
     box-shadow: 0 4px 12px var(--shadow-dark) !important;
 }
 
+/* Override W3.CSS dropdown hover to match theme */
+.w3-dropdown-hover:hover > .w3-button:first-child {
+    background-color: var(--parchment-accent) !important;
+    color: var(--text-accent) !important;
+}
+
 /* Scrollbar styling for webkit browsers */
 ::-webkit-scrollbar {
     width: 12px;
@@ -1044,6 +1068,10 @@ th {
     padding: 4px 8px;
 }
 
+#charges input.charge-name {
+    margin-left: 8px;
+}
+
 #charges input.charge-max {
     width: 60px;
     border: 1px solid var(--border-color);
@@ -1052,9 +1080,53 @@ th {
 }
 
 #charges .button.fill,
-#charges .button.empty {
+#charges .button.empty,
+#charges .button.remove-charge,
+#charges .button.move-up,
+#charges .button.move-down,
+#attacks tbody .button {
     padding: 4px 12px;
     font-size: 0.85em;
+    height: 29px;
+    line-height: 1.2;
+    box-sizing: border-box;
+}
+
+/* Reorder buttons styling */
+#charges .button.move-up,
+#charges .button.move-down,
+#attacks tbody .button.move-up,
+#attacks tbody .button.move-down {
+    margin-right: 4px;
+    padding: 4px 10px;
+}
+
+#charges .button.move-up:first-child {
+    margin-right: 2px;
+}
+
+/* Delete buttons styling */
+#charges .button.remove-charge,
+#attacks tbody .button:not(.move-up):not(.move-down) {
+    color: var(--danger-red) !important;
+    margin-left: 12px;
+    transition: color 0.2s ease;
+}
+
+#charges .button.remove-charge:hover,
+#attacks tbody .button:not(.move-up):not(.move-down):hover {
+    color: var(--danger-red-hover) !important;
+    cursor: pointer;
+}
+
+/* Attack table reorder cell */
+#attacks tbody .reorder-cell {
+    padding: 4px;
+    white-space: nowrap;
+}
+
+#attacks tbody .reorder-cell button {
+    margin: 0 2px;
 }
 
 /* Hide checkboxes by default - JavaScript will show them when max value is set */

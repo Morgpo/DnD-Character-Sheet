@@ -29,13 +29,13 @@ $(document).ready(function(argument) {
     }
 
     // Initialize checkbox visibility for all charge divs on page load
-    $('#charges > div[id^="charge-"]').each(function() {
+    $('#charges-container .charge-row').each(function() {
         updateCheckboxVisibility(this);
     });
 
     // Update checkbox visibility when max value changes
-    $('#charges').on('input change', 'input.charge-max', function() {
-        var chargeDiv = $(this).closest('div[id^="charge-"]');
+    $('#charges-container').on('input change', 'input.charge-max', function() {
+        var chargeDiv = $(this).closest('.charge-row');
         updateCheckboxVisibility(chargeDiv);
         // Trigger autosave
         if (typeof triggerAutoSave === 'function') {
@@ -43,7 +43,7 @@ $(document).ready(function(argument) {
         }
     });
 
-    $('#charges .empty').click(function(argument) {
+    $('#charges-container').on('click', '.empty', function(argument) {
         $(this).parent().find('input[type="checkbox"]').each(function(argument) {
             $(this).prop("checked", false);
         });
@@ -53,7 +53,7 @@ $(document).ready(function(argument) {
         }
     });
 
-    $('#charges .fill').click(function(argument) {
+    $('#charges-container').on('click', '.fill', function(argument) {
         var chargeDiv = $(this).parent();
         var maxInput = chargeDiv.find('input.charge-max');
         var checkboxes = chargeDiv.find('input[type="checkbox"]');

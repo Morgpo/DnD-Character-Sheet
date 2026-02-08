@@ -125,14 +125,7 @@ function clearSheetData() {
                 languages: ""
             },
             attacks_spells: [],
-            charges: {
-                charge_1: { name: "", max: "", total: [] },
-                charge_2: { name: "", max: "", total: [] },
-                charge_3: { name: "", max: "", total: [] },
-                charge_4: { name: "", max: "", total: [] },
-                charge_5: { name: "", max: "", total: [] },
-                charge_6: { name: "", max: "", total: [] }
-            },
+            charges: [],
             features: ""
         },
         page2: {
@@ -540,65 +533,133 @@ $(document).ready(function(argument) {
     $('#page-1 #proficiencies #languages textarea[name="languages"]').val(loadJson.page1.proficiencies.languages);
 
     //Load Attacks
-    $.each(loadJson.page1.attacks_spells, function(index, value) {
-        $('#page-1 #attacks-spells #attacks tbody').append(`
-            <tr>                    <td><input type="text" name="name" value="` + value.name + `"/></td>
-                <td><input type="text" name="stat" value="` + value.stat + `"/></td>
-                <td><input type="text" name="toHit" value="` + value.toHit + `"/></td>
-                <td><input type="text" name="damage" value="` + value.damage + `"/></td>
-                <td><input type="text" name="damage_type" value="` + value.damage_type + `"/></td>
-                <td><button>X</button></td>                </tr>
-            `);
-    });
+    if (loadJson.page1.attacks_spells && loadJson.page1.attacks_spells.length > 0) {
+        // Clear existing attacks except the first one
+        $('#page-1 #attacks-spells #attacks tbody tr').slice(1).remove();
+        
+        $.each(loadJson.page1.attacks_spells, function(index, value) {
+            var attackRow;
+            
+            if (index === 0) {
+                // Use the existing first row
+                attackRow = $('#page-1 #attacks-spells #attacks tbody tr').first();
+                attackRow.find('input[name="name"]').val(value.name);
+                attackRow.find('input[name="stat"]').val(value.stat);
+                attackRow.find('input[name="toHit"]').val(value.toHit);
+                attackRow.find('input[name="damage"]').val(value.damage);
+                attackRow.find('input[name="damage_type"]').val(value.damage_type);
+            } else {
+                // Create new row for additional attacks
+                $('#page-1 #attacks-spells #attacks tbody').append(`
+                    <tr>
+                        <td class="reorder-cell"><button class="button move-up w3-button w3-blue-gray w3-round-large"><i class="fa fa-arrow-up"></i></button><button class="button move-down w3-button w3-blue-gray w3-round-large"><i class="fa fa-arrow-down"></i></button></td>
+                        <td><input type="text" name="name" value="` + value.name + `"/></td>
+                        <td><input type="text" name="stat" value="` + value.stat + `"/></td>
+                        <td><input type="text" name="toHit" value="` + value.toHit + `"/></td>
+                        <td><input type="text" name="damage" value="` + value.damage + `"/></td>
+                        <td><input type="text" name="damage_type" value="` + value.damage_type + `"/></td>
+                        <td><button class="button w3-button w3-blue-gray w3-round-large"><i class="fa fa-trash"></i></button></td>
+                    </tr>
+                `);
+            }
+        });
+    } else {
+        // No saved attacks - ensure the default empty row exists and is empty
+        $('#page-1 #attacks-spells #attacks tbody tr').slice(1).remove();
+        var defaultRow = $('#page-1 #attacks-spells #attacks tbody tr').first();
+        if (defaultRow.length > 0) {
+            defaultRow.find('input[name="name"]').val('');
+            defaultRow.find('input[name="stat"]').val('');
+            defaultRow.find('input[name="toHit"]').val('');
+            defaultRow.find('input[name="damage"]').val('');
+            defaultRow.find('input[name="damage_type"]').val('');
+        }
+    }
 
     //Load Charges
-    $('#page-1 #charges #charge-1 input[name="charge-1"]').val(loadJson.page1.charges.charge_1.name);
-    if (loadJson.page1.charges.charge_1.max) {
-        $('#page-1 #charges #charge-1 input.charge-max').val(loadJson.page1.charges.charge_1.max);
+    // Clear existing charges except the first one
+    $('#charges-container .charge-row').slice(1).remove();
+    
+    // Handle both old format (object) and new format (array)
+    var chargesData = loadJson.page1.charges;
+    var chargesArray = [];
+    
+    // Convert old format to new format if necessary
+    if (chargesData && !Array.isArray(chargesData)) {
+        // Old format: charge_1, charge_2, etc.
+        for (var i = 1; i <= 6; i++) {
+            var chargeKey = 'charge_' + i;
+            if (chargesData[chargeKey] && chargesData[chargeKey].name) {
+                chargesArray.push({
+                    name: chargesData[chargeKey].name,
+                    max: chargesData[chargeKey].max,
+                    checked: chargesData[chargeKey].total || []
+                });
+            }
+        }
+    } else if (Array.isArray(chargesData)) {
+        chargesArray = chargesData;
     }
-    $.each(loadJson.page1.charges.charge_1.total, function(index, value) {
-        $('#page-1 #charges #charge-1 input[name="' + value + '"]').prop("checked", true);
-    });
-    $('#page-1 #charges #charge-2 input[name="charge-2"]').val(loadJson.page1.charges.charge_2.name);
-    if (loadJson.page1.charges.charge_2.max) {
-        $('#page-1 #charges #charge-2 input.charge-max').val(loadJson.page1.charges.charge_2.max);
+    
+    // Load charges into the UI
+    if (chargesArray.length > 0) {
+        $.each(chargesArray, function(index, charge) {
+            var chargeRow;
+            
+            if (index === 0) {
+                // Use the existing first row
+                chargeRow = $('#charges-container .charge-row').first();
+            } else {
+                // Create new row for additional charges
+                var newRow = `
+                    <div class="charge-row w3-col w3-padding">
+                        <button class="button move-up w3-button w3-blue-gray w3-round-large"><i class="fa fa-arrow-up"></i></button>
+                        <button class="button move-down w3-button w3-blue-gray w3-round-large"><i class="fa fa-arrow-down"></i></button>
+                        <input type="text" class="charge-name" placeholder="Name" />
+                        <input type="text" class="charge-max" maxlength="2" size="2" placeholder="Max" title="Max charges (leave empty for 10)" />
+                        <button class="button fill w3-button w3-blue-gray w3-round-large">Fill</button>
+                        <button class="button empty w3-button w3-blue-gray w3-round-large">Empty</button>
+                        <input type="checkbox" name="1" />
+                        <input type="checkbox" name="2" />
+                        <input type="checkbox" name="3" />
+                        <input type="checkbox" name="4" />
+                        <input type="checkbox" name="5" />
+                        <input type="checkbox" name="6" />
+                        <input type="checkbox" name="7" />
+                        <input type="checkbox" name="8" />
+                        <input type="checkbox" name="9" />
+                        <input type="checkbox" name="10" />
+                        <button class="button remove-charge w3-button w3-blue-gray w3-round-large"><i class="fa fa-trash"></i></button>
+                    </div>
+                `;
+                $(newRow).insertBefore($('#add-charge-btn').parent());
+                chargeRow = $('#charges-container .charge-row').last();
+            }
+            
+            // Set the values
+            chargeRow.find('input.charge-name').val(charge.name);
+            if (charge.max) {
+                chargeRow.find('input.charge-max').val(charge.max);
+            }
+            
+            // Check the appropriate checkboxes
+            $.each(charge.checked, function(i, checkboxName) {
+                chargeRow.find('input[type="checkbox"][name="' + checkboxName + '"]').prop("checked", true);
+            });
+        });
+    } else {
+        // No saved charges - ensure the default empty row exists and is empty
+        var defaultChargeRow = $('#charges-container .charge-row').first();
+        if (defaultChargeRow.length > 0) {
+            defaultChargeRow.find('input.charge-name').val('');
+            defaultChargeRow.find('input.charge-max').val('');
+            defaultChargeRow.find('input[type="checkbox"]').prop('checked', false);
+        }
     }
-    $.each(loadJson.page1.charges.charge_2.total, function(index, value) {
-        $('#page-1 #charges #charge-2 input[name="' + value + '"]').prop("checked", true);
-    });
-    $('#page-1 #charges #charge-3 input[name="charge-3"]').val(loadJson.page1.charges.charge_3.name);
-    if (loadJson.page1.charges.charge_3.max) {
-        $('#page-1 #charges #charge-3 input.charge-max').val(loadJson.page1.charges.charge_3.max);
-    }
-    $.each(loadJson.page1.charges.charge_3.total, function(index, value) {
-        $('#page-1 #charges #charge-3 input[name="' + value + '"]').prop("checked", true);
-    });
-    $('#page-1 #charges #charge-4 input[name="charge-4"]').val(loadJson.page1.charges.charge_4.name);
-    if (loadJson.page1.charges.charge_4.max) {
-        $('#page-1 #charges #charge-4 input.charge-max').val(loadJson.page1.charges.charge_4.max);
-    }
-    $.each(loadJson.page1.charges.charge_4.total, function(index, value) {
-        $('#page-1 #charges #charge-4 input[name="' + value + '"]').prop("checked", true);
-    });
-    $('#page-1 #charges #charge-5 input[name="charge-5"]').val(loadJson.page1.charges.charge_5.name);
-    if (loadJson.page1.charges.charge_5.max) {
-        $('#page-1 #charges #charge-5 input.charge-max').val(loadJson.page1.charges.charge_5.max);
-    }
-    $.each(loadJson.page1.charges.charge_5.total, function(index, value) {
-        $('#page-1 #charges #charge-5 input[name="' + value + '"]').prop("checked", true);
-    });
-    $('#page-1 #charges #charge-6 input[name="charge-6"]').val(loadJson.page1.charges.charge_6.name);
-    if (loadJson.page1.charges.charge_6.max) {
-        $('#page-1 #charges #charge-6 input.charge-max').val(loadJson.page1.charges.charge_6.max);
-    }
-    $.each(loadJson.page1.charges.charge_6.total, function(index, value) {
-        $('#page-1 #charges #charge-6 input[name="' + value + '"]').prop("checked", true);
-    });
 
     // Trigger checkbox visibility update after charges are loaded
-    // This will run after extra.js has initialized
     setTimeout(function() {
-        $('#charges > div[id^="charge-"]').each(function() {
+        $('#charges-container .charge-row').each(function() {
             var maxInput = $(this).find('input.charge-max');
             var checkboxes = $(this).find('input[type="checkbox"]');
             var maxChecks = 0;
