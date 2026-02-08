@@ -3,26 +3,375 @@ function loadNewSheet(argument) {
     var confirmMessage = 'WARNING: Reloading the sheet will replace ALL current data with the saved sheet from the file.\n\nDo you want to continue?';
     
     if (confirm(confirmMessage)) {
-        // Ask if they want to download a backup first
-        var backupMessage = 'Would you like to download a backup of your current sheet before reloading?';
-        
-        if (confirm(backupMessage)) {
-            // Download backup, clear autosave, then reload
-            saveSheet();
-            // Give a moment for the download to start
-            setTimeout(function() {
-                // Clear autosave so we load from savedSheet.json
-                localStorage.removeItem('dnd_character_sheet_autosave');
-                localStorage.removeItem('dnd_character_sheet_autosave_timestamp');
-                location.reload();
-            }, 500);
-        } else {
+        // Give a moment for any pending operations to complete
+        setTimeout(function() {
             // Clear autosave so we load from savedSheet.json, then reload
             localStorage.removeItem('dnd_character_sheet_autosave');
             localStorage.removeItem('dnd_character_sheet_autosave_timestamp');
             location.reload();
-        }
+        }, 100);
     }
+}
+
+function clearSheet(argument) {
+    // Confirm before clearing as this will remove all current data
+    var confirmMessage = 'WARNING: This will clear ALL data and reset the character sheet to blank.\n\nThis action cannot be undone!\n\nDo you want to continue?';
+    
+    if (confirm(confirmMessage)) {
+        // Give a moment for any pending operations to complete
+        setTimeout(function() {
+            clearSheetData();
+        }, 100);
+    }
+}
+
+function clearSheetData() {
+    // Create an empty character sheet structure matching savedSheet.json format
+    var emptySheet = {
+        page1: {
+            basic_info: {
+                char_name: "",
+                level: "",
+                level_two: ""
+            },
+            character_info: {
+                race_class: "",
+                background: "",
+                player_name: "",
+                exp: "",
+                alignment: "",
+                deity: ""
+            },
+            top_bar: {
+                proficiency: "",
+                initiative: "",
+                passive_perception: "",
+                ac: "",
+                speed: "",
+                spell_dc: "",
+                insperation: ""
+            },
+            attributes: {
+                str: "",
+                str_mod: "",
+                dex: "",
+                dex_mod: "",
+                con: "",
+                con_mod: "",
+                int: "",
+                int_mod: "",
+                wis: "",
+                wis_mod: "",
+                cha: "",
+                cha_mod: ""
+            },
+            saves_skills: {
+                spell_casting: "none",
+                saves: {
+                    str_save: { val: "", prof: false },
+                    dex_save: { val: "", prof: false },
+                    con_save: { val: "", prof: false },
+                    int_save: { val: "", prof: false },
+                    wis_save: { val: "", prof: false },
+                    cha_save: { val: "", prof: false }
+                },
+                skills: {
+                    acrobatics: { val: "", prof: false, expr: false },
+                    animal_handling: { val: "", prof: false, expr: false },
+                    arcana: { val: "", prof: false, expr: false },
+                    athletics: { val: "", prof: false, expr: false },
+                    deception: { val: "", prof: false, expr: false },
+                    history: { val: "", prof: false, expr: false },
+                    insight: { val: "", prof: false, expr: false },
+                    intimidation: { val: "", prof: false, expr: false },
+                    investigation: { val: "", prof: false, expr: false },
+                    medicine: { val: "", prof: false, expr: false },
+                    nature: { val: "", prof: false, expr: false },
+                    perception: { val: "", prof: false, expr: false },
+                    performance: { val: "", prof: false, expr: false },
+                    persuasion: { val: "", prof: false, expr: false },
+                    religion: { val: "", prof: false, expr: false },
+                    sleight_hand: { val: "", prof: false, expr: false },
+                    stealth: { val: "", prof: false, expr: false },
+                    survival: { val: "", prof: false, expr: false }
+                }
+            },
+            status: {
+                conditions: "",
+                boons: "",
+                death_saves: {
+                    success: {
+                        one: false,
+                        two: false,
+                        three: false
+                    },
+                    failure: {
+                        one: false,
+                        two: false,
+                        three: false
+                    }
+                },
+                hit_dice: {
+                    type: "",
+                    current_hd: ""
+                },
+                temp_health: "",
+                current_health: "",
+                max_health: ""
+            },
+            proficiencies: {
+                weapon_armor: "",
+                tools: "",
+                languages: ""
+            },
+            attacks_spells: [],
+            charges: {
+                charge_1: { name: "", max: "", total: [] },
+                charge_2: { name: "", max: "", total: [] },
+                charge_3: { name: "", max: "", total: [] },
+                charge_4: { name: "", max: "", total: [] },
+                charge_5: { name: "", max: "", total: [] },
+                charge_6: { name: "", max: "", total: [] }
+            },
+            features: ""
+        },
+        page2: {
+            equipment: {
+                val: {
+                    col_1: [],
+                    col_2: []
+                },
+                total_weight: "",
+                currency: {
+                    copper: "",
+                    silver: "",
+                    gold: "",
+                    electrum: "",
+                    platinum: "",
+                    total: "",
+                    base: "g"
+                },
+                encumberance: {
+                    base: "",
+                    encumbered: "",
+                    h_encumbered: "",
+                    push: ""
+                }
+            },
+            attacks_spells: [],
+            mount_pet: {
+                name: "",
+                type: "",
+                health: "",
+                ac: "",
+                speed: "",
+                notes: ""
+            },
+            mount_pet2: {
+                name2: "",
+                type2: "",
+                health2: "",
+                ac2: "",
+                speed2: "",
+                notes2: ""
+            }
+        },
+        page4: {
+            backstory: "",
+            allies_organizations: {
+                name: "",
+                val: ""
+            },
+            personality: {
+                personality_traits: "",
+                ideals: "",
+                bonds: "",
+                flaws: ""
+            }
+        },
+        page3: {
+            spell_info: {
+                class: "",
+                att: "",
+                dc: "",
+                bonus: ""
+            },
+            spells: {
+                cantrips: {
+                    spells: [
+                        { spell_name: "" },
+                        { spell_name: "" },
+                        { spell_name: "" },
+                        { spell_name: "" },
+                        { spell_name: "" },
+                        { spell_name: "" },
+                        { spell_name: "" },
+                        { spell_name: "" }
+                    ]
+                },
+                level_1: {
+                    total: "",
+                    spells: [
+                        { preped: false, spell_name: "" },
+                        { preped: false, spell_name: "" },
+                        { preped: false, spell_name: "" },
+                        { preped: false, spell_name: "" },
+                        { preped: false, spell_name: "" },
+                        { preped: false, spell_name: "" },
+                        { preped: false, spell_name: "" },
+                        { preped: false, spell_name: "" },
+                        { preped: false, spell_name: "" },
+                        { preped: false, spell_name: "" },
+                        { preped: false, spell_name: "" },
+                        { preped: false, spell_name: "" },
+                        { preped: false, spell_name: "" }
+                    ],
+                    slots: []
+                },
+                level_2: {
+                    total: "",
+                    spells: [
+                        { preped: false, spell_name: "" },
+                        { preped: false, spell_name: "" },
+                        { preped: false, spell_name: "" },
+                        { preped: false, spell_name: "" },
+                        { preped: false, spell_name: "" },
+                        { preped: false, spell_name: "" },
+                        { preped: false, spell_name: "" },
+                        { preped: false, spell_name: "" },
+                        { preped: false, spell_name: "" },
+                        { preped: false, spell_name: "" },
+                        { preped: false, spell_name: "" },
+                        { preped: false, spell_name: "" },
+                        { preped: false, spell_name: "" }
+                    ],
+                    slots: []
+                },
+                level_3: {
+                    total: "",
+                    spells: [
+                        { preped: false, spell_name: "" },
+                        { preped: false, spell_name: "" },
+                        { preped: false, spell_name: "" },
+                        { preped: false, spell_name: "" },
+                        { preped: false, spell_name: "" },
+                        { preped: false, spell_name: "" },
+                        { preped: false, spell_name: "" },
+                        { preped: false, spell_name: "" },
+                        { preped: false, spell_name: "" },
+                        { preped: false, spell_name: "" },
+                        { preped: false, spell_name: "" },
+                        { preped: false, spell_name: "" },
+                        { preped: false, spell_name: "" }
+                    ],
+                    slots: []
+                },
+                level_4: {
+                    total: "",
+                    spells: [
+                        { preped: false, spell_name: "" },
+                        { preped: false, spell_name: "" },
+                        { preped: false, spell_name: "" },
+                        { preped: false, spell_name: "" },
+                        { preped: false, spell_name: "" },
+                        { preped: false, spell_name: "" },
+                        { preped: false, spell_name: "" },
+                        { preped: false, spell_name: "" },
+                        { preped: false, spell_name: "" },
+                        { preped: false, spell_name: "" },
+                        { preped: false, spell_name: "" },
+                        { preped: false, spell_name: "" },
+                        { preped: false, spell_name: "" }
+                    ],
+                    slots: []
+                },
+                level_5: {
+                    total: "",
+                    spells: [
+                        { preped: false, spell_name: "" },
+                        { preped: false, spell_name: "" },
+                        { preped: false, spell_name: "" },
+                        { preped: false, spell_name: "" },
+                        { preped: false, spell_name: "" },
+                        { preped: false, spell_name: "" },
+                        { preped: false, spell_name: "" },
+                        { preped: false, spell_name: "" },
+                        { preped: false, spell_name: "" }
+                    ],
+                    slots: []
+                },
+                level_6: {
+                    total: "",
+                    spells: [
+                        { preped: false, spell_name: "" },
+                        { preped: false, spell_name: "" },
+                        { preped: false, spell_name: "" },
+                        { preped: false, spell_name: "" },
+                        { preped: false, spell_name: "" },
+                        { preped: false, spell_name: "" },
+                        { preped: false, spell_name: "" },
+                        { preped: false, spell_name: "" },
+                        { preped: false, spell_name: "" }
+                    ],
+                    slots: []
+                },
+                level_7: {
+                    total: "",
+                    spells: [
+                        { preped: false, spell_name: "" },
+                        { preped: false, spell_name: "" },
+                        { preped: false, spell_name: "" },
+                        { preped: false, spell_name: "" },
+                        { preped: false, spell_name: "" },
+                        { preped: false, spell_name: "" },
+                        { preped: false, spell_name: "" },
+                        { preped: false, spell_name: "" },
+                        { preped: false, spell_name: "" }
+                    ],
+                    slots: []
+                },
+                level_8: {
+                    total: "",
+                    spells: [
+                        { preped: false, spell_name: "" },
+                        { preped: false, spell_name: "" },
+                        { preped: false, spell_name: "" },
+                        { preped: false, spell_name: "" },
+                        { preped: false, spell_name: "" },
+                        { preped: false, spell_name: "" },
+                        { preped: false, spell_name: "" }
+                    ],
+                    slots: []
+                },
+                level_9: {
+                    total: "",
+                    spells: [
+                        { preped: false, spell_name: "" },
+                        { preped: false, spell_name: "" },
+                        { preped: false, spell_name: "" },
+                        { preped: false, spell_name: "" },
+                        { preped: false, spell_name: "" },
+                        { preped: false, spell_name: "" },
+                        { preped: false, spell_name: "" },
+                        { preped: false, spell_name: "" },
+                        { preped: false, spell_name: "" }
+                    ],
+                    slots: []
+                }
+            }
+        },
+        page5: {
+            notes_1: "",
+            notes_2: ""
+        }
+    };
+    
+    // Save the empty sheet to localStorage
+    localStorage.setItem('dnd_character_sheet_autosave', JSON.stringify(emptySheet));
+    localStorage.setItem('dnd_character_sheet_autosave_timestamp', new Date().toISOString());
+    
+    // Reload the page to display the cleared sheet
+    location.reload();
 }
 
 $(document).ready(function(argument) {
@@ -204,29 +553,70 @@ $(document).ready(function(argument) {
 
     //Load Charges
     $('#page-1 #charges #charge-1 input[name="charge-1"]').val(loadJson.page1.charges.charge_1.name);
+    if (loadJson.page1.charges.charge_1.max) {
+        $('#page-1 #charges #charge-1 input.charge-max').val(loadJson.page1.charges.charge_1.max);
+    }
     $.each(loadJson.page1.charges.charge_1.total, function(index, value) {
         $('#page-1 #charges #charge-1 input[name="' + value + '"]').prop("checked", true);
     });
     $('#page-1 #charges #charge-2 input[name="charge-2"]').val(loadJson.page1.charges.charge_2.name);
+    if (loadJson.page1.charges.charge_2.max) {
+        $('#page-1 #charges #charge-2 input.charge-max').val(loadJson.page1.charges.charge_2.max);
+    }
     $.each(loadJson.page1.charges.charge_2.total, function(index, value) {
         $('#page-1 #charges #charge-2 input[name="' + value + '"]').prop("checked", true);
     });
     $('#page-1 #charges #charge-3 input[name="charge-3"]').val(loadJson.page1.charges.charge_3.name);
+    if (loadJson.page1.charges.charge_3.max) {
+        $('#page-1 #charges #charge-3 input.charge-max').val(loadJson.page1.charges.charge_3.max);
+    }
     $.each(loadJson.page1.charges.charge_3.total, function(index, value) {
         $('#page-1 #charges #charge-3 input[name="' + value + '"]').prop("checked", true);
     });
     $('#page-1 #charges #charge-4 input[name="charge-4"]').val(loadJson.page1.charges.charge_4.name);
+    if (loadJson.page1.charges.charge_4.max) {
+        $('#page-1 #charges #charge-4 input.charge-max').val(loadJson.page1.charges.charge_4.max);
+    }
     $.each(loadJson.page1.charges.charge_4.total, function(index, value) {
         $('#page-1 #charges #charge-4 input[name="' + value + '"]').prop("checked", true);
     });
     $('#page-1 #charges #charge-5 input[name="charge-5"]').val(loadJson.page1.charges.charge_5.name);
+    if (loadJson.page1.charges.charge_5.max) {
+        $('#page-1 #charges #charge-5 input.charge-max').val(loadJson.page1.charges.charge_5.max);
+    }
     $.each(loadJson.page1.charges.charge_5.total, function(index, value) {
         $('#page-1 #charges #charge-5 input[name="' + value + '"]').prop("checked", true);
     });
     $('#page-1 #charges #charge-6 input[name="charge-6"]').val(loadJson.page1.charges.charge_6.name);
+    if (loadJson.page1.charges.charge_6.max) {
+        $('#page-1 #charges #charge-6 input.charge-max').val(loadJson.page1.charges.charge_6.max);
+    }
     $.each(loadJson.page1.charges.charge_6.total, function(index, value) {
         $('#page-1 #charges #charge-6 input[name="' + value + '"]').prop("checked", true);
     });
+
+    // Trigger checkbox visibility update after charges are loaded
+    // This will run after extra.js has initialized
+    setTimeout(function() {
+        $('#charges > div[id^="charge-"]').each(function() {
+            var maxInput = $(this).find('input.charge-max');
+            var checkboxes = $(this).find('input[type="checkbox"]');
+            var maxChecks = 0;
+            
+            if (maxInput.length > 0 && maxInput.val()) {
+                maxChecks = parseInt(maxInput.val()) || 0;
+                maxChecks = Math.max(0, Math.min(10, maxChecks));
+            }
+            
+            checkboxes.each(function(index) {
+                if (index < maxChecks) {
+                    $(this).show();
+                } else {
+                    $(this).hide();
+                }
+            });
+        });
+    }, 100);
 
     //Load Feats and Traits
     $('#page-1 #features textarea[name="features"]').val(loadJson.page1.features);

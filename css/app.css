@@ -1036,3 +1036,28 @@ th {
 .w3-button:active {
     background-color: var(--parchment-light) !important;
 }
+
+/* Charges/Ammo Section Styling */
+#charges input[type="text"] {
+    border: 1px solid var(--border-color);
+    border-radius: 3px;
+    padding: 4px 8px;
+}
+
+#charges input.charge-max {
+    width: 60px;
+    border: 1px solid var(--border-color);
+    border-radius: 3px;
+    padding: 4px 8px;
+}
+
+#charges .button.fill,
+#charges .button.empty {
+    padding: 4px 12px;
+    font-size: 0.85em;
+}
+
+/* Hide checkboxes by default - JavaScript will show them when max value is set */
+#charges input[type="checkbox"] {
+    display: none;
+}

@@ -66,6 +66,7 @@
             <div id="menu-options" class="w3-dropdown-content w3-bar-block w3-animate-right">
                 <a href="#" class="w3-bar-item w3-button w3-hover-blue-gray" onclick="loadNewSheet(); w3_close()">Reload Sheet</a>
                 <a href="#" class="w3-bar-item w3-button w3-hover-blue-gray" onclick="saveSheet(); w3_close()">Download Backup</a>
+                <a href="#" class="w3-bar-item w3-button w3-hover-blue-gray" onclick="clearSheet(); w3_close()">Clear Sheet</a>
             </div>
         </div>
         <div class="info w3-margin-top w3-border-top">
@@ -276,10 +277,8 @@
                             <span class="sub-label">Failure</span>
                             <div id="failure-num">
                                 <input class="w3-check" type="checkbox" name="failure-1" />
-                                <!--
                                 <input class="w3-check" type="checkbox" name="failure-2" />
                                 <input class="w3-check" type="checkbox" name="failure-3" />
-                                -->
                             </div>
                         </div>
                     </div>
@@ -533,12 +532,13 @@
                 </div>
             </div>
             <!-- Charges, Ammo, Resources -->
-            <div id="charges-ammo" class="w3-col w3-card w3-round w3-margin-bottom m12 l8">
+            <div id="charges" class="w3-col w3-card w3-round w3-margin-bottom m12 l8">
                 <button class="expando w3-button w3-bar-block w3-left-align w3-blue-gray">Class Resources, Ammo, & Charges</button>
-                <div id="charges" class="w3-padding w3-animate-opacity">
-                    <div id="charge-1" class="w3-col w3-padding m8 l8">
-                        <input type="text" name="charge-1" />
+                    <div id="charge-1" class="w3-col w3-padding">
+                        <input type="text" name="charge-1" placeholder="Name" />
                         <input type="text" class="charge-max" maxlength="2" size="2" placeholder="Max" title="Max charges (leave empty for 10)" />
+                        <button class="button fill w3-button w3-blue-gray w3-round-large">Fill</button>
+                        <button class="button empty w3-button w3-blue-gray w3-round-large">Empty</button>
                         <input type="checkbox" name="1" />
                         <input type="checkbox" name="2" />
                         <input type="checkbox" name="3" />
@@ -550,13 +550,11 @@
                         <input type="checkbox" name="9" />
                         <input type="checkbox" name="10" />
                     </div>
-                    <div class="w3-col m4 l4">
-                        <button class="button empty w3-button w3-blue-gray w3-round-large">Empty</button>
-                        <button class="button fill w3-button w3-blue-gray w3-round-large">Fill</button>
-                    </div>
-                    <div id="charge-2" class="w3-col w3-padding m8 l8">
-                        <input type="text" name="charge-2" />
+                    <div id="charge-2" class="w3-col w3-padding">
+                        <input type="text" name="charge-2" placeholder="Name" />
                         <input type="text" class="charge-max" maxlength="2" size="2" placeholder="Max" title="Max charges (leave empty for 10)" />
+                        <button class="button fill w3-button w3-blue-gray w3-round-large">Fill</button>
+                        <button class="button empty w3-button w3-blue-gray w3-round-large">Empty</button>
                         <input type="checkbox" name="1" />
                         <input type="checkbox" name="2" />
                         <input type="checkbox" name="3" />
@@ -568,13 +566,11 @@
                         <input type="checkbox" name="9" />
                         <input type="checkbox" name="10" />
                     </div>
-                    <div class="w3-col m4 l4">
-                        <button class="button empty w3-button w3-blue-gray w3-round-large">Empty</button>
-                        <button class="button fill w3-button w3-blue-gray w3-round-large">Fill</button>
-                    </div>
-                    <div id="charge-3" class="w3-col w3-padding m8 l8">
-                        <input type="text" name="charge-3" />
+                    <div id="charge-3" class="w3-col w3-padding">
+                        <input type="text" name="charge-3" placeholder="Name" />
                         <input type="text" class="charge-max" maxlength="2" size="2" placeholder="Max" title="Max charges (leave empty for 10)" />
+                        <button class="button fill w3-button w3-blue-gray w3-round-large">Fill</button>
+                        <button class="button empty w3-button w3-blue-gray w3-round-large">Empty</button>
                         <input type="checkbox" name="1" />
                         <input type="checkbox" name="2" />
                         <input type="checkbox" name="3" />
@@ -586,13 +582,11 @@
                         <input type="checkbox" name="9" />
                         <input type="checkbox" name="10" />
                     </div>
-                    <div class="w3-col m4 l4">
-                        <button class="button empty w3-button w3-blue-gray w3-round-large">Empty</button>
-                        <button class="button fill w3-button w3-blue-gray w3-round-large">Fill</button>
-                    </div>
-                    <div id="charge-4" class="w3-col w3-padding m8 l8">
-                        <input type="text" name="charge-4" />
+                    <div id="charge-4" class="w3-col w3-padding">
+                        <input type="text" name="charge-4" placeholder="Name" />
                         <input type="text" class="charge-max" maxlength="2" size="2" placeholder="Max" title="Max charges (leave empty for 10)" />
+                        <button class="button fill w3-button w3-blue-gray w3-round-large">Fill</button>
+                        <button class="button empty w3-button w3-blue-gray w3-round-large">Empty</button>
                         <input type="checkbox" name="1" />
                         <input type="checkbox" name="2" />
                         <input type="checkbox" name="3" />
@@ -604,13 +598,11 @@
                         <input type="checkbox" name="9" />
                         <input type="checkbox" name="10" />
                     </div>
-                    <div class="w3-col m4 l4">
-                        <button class="button empty w3-button w3-blue-gray w3-round-large">Empty</button>
-                        <button class="button fill w3-button w3-blue-gray w3-round-large">Fill</button>
-                    </div>
-                    <div id="charge-5" class="w3-col w3-padding m8 l8">
-                        <input type="text" name="charge-5" />
+                    <div id="charge-5" class="w3-col w3-padding">
+                        <input type="text" name="charge-5" placeholder="Name" />
                         <input type="text" class="charge-max" maxlength="2" size="2" placeholder="Max" title="Max charges (leave empty for 10)" />
+                        <button class="button fill w3-button w3-blue-gray w3-round-large">Fill</button>
+                        <button class="button empty w3-button w3-blue-gray w3-round-large">Empty</button>
                         <input type="checkbox" name="1" />
                         <input type="checkbox" name="2" />
                         <input type="checkbox" name="3" />
@@ -622,13 +614,11 @@
                         <input type="checkbox" name="9" />
                         <input type="checkbox" name="10" />
                     </div>
-                    <div class="w3-col m4 l4">
-                        <button class="button empty w3-button w3-blue-gray w3-round-large">Empty</button>
-                        <button class="button fill w3-button w3-blue-gray w3-round-large">Fill</button>
-                    </div>
-                    <div id="charge-6" class="w3-col w3-padding m8 l8">
-                        <input type="text" name="charge-6" />
+                    <div id="charge-6" class="w3-col w3-padding">
+                        <input type="text" name="charge-6" placeholder="Name" />
                         <input type="text" class="charge-max" maxlength="2" size="2" placeholder="Max" title="Max charges (leave empty for 10)" />
+                        <button class="button fill w3-button w3-blue-gray w3-round-large">Fill</button>
+                        <button class="button empty w3-button w3-blue-gray w3-round-large">Empty</button>
                         <input type="checkbox" name="1" />
                         <input type="checkbox" name="2" />
                         <input type="checkbox" name="3" />
@@ -640,11 +630,6 @@
                         <input type="checkbox" name="9" />
                         <input type="checkbox" name="10" />
                     </div>
-                    <div class="w3-col m4 l4">
-                        <button class="button empty w3-button w3-blue-gray w3-round-large">Empty</button>
-                        <button class="button fill w3-button w3-blue-gray w3-round-large">Fill</button>
-                    </div>
-                </div>
             </div>
             <!-- Attacks -->
             <div class="w3-col w3-margin-bottom l8">
@@ -1634,8 +1619,8 @@
         <!-- Footer -->
         <footer class="page-width w3-container w3-content">
             <div class="footer w3-blue-gray w3-round w3-padding">
-                DnD 5<sup>th</sup> Edition Character Sheet || Created by <a href="https://github.com/Chee32" target="_blank">Chee32</a> & <a href="https://github.com/lckynmbrsvn" target="_blank">lckynmbrsvn</a> ||
-                <a href="https://github.com/lckynmbrsvn/5e-Character-Sheet" target="_blank">GitHub Project</a>
+                DnD 5<sup>th</sup> Edition Character Sheet || Created by <a href="https://github.com/Chee32" target="_blank">Chee32</a>, <a href="https://github.com/lckynmbrsvn" target="_blank">lckynmbrsvn</a> & <a href="https://github.com/Morgpo" target="_blank">Morgpo</a> ||
+                <a href="https://github.com/lckynmbrsvn/5e-Character-Sheet" target="_blank">Original GitHub Project</a>
             </div>
         </footer>
     </div>
