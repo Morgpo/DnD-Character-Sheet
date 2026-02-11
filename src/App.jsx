@@ -14,19 +14,37 @@ import Equipment from './components/Equipment'
 import Spells from './components/Spells'
 import Backstory from './components/Backstory'
 import Notes from './components/Notes'
+import ConfirmModal from './components/ConfirmModal'
 
 const AUTOSAVE_KEY = 'dnd_character_sheet_autosave'
 
-const getInitialState = () => {
-  try {
-    const saved = localStorage.getItem(AUTOSAVE_KEY)
-    if (saved) {
-      return JSON.parse(saved)
-    }
-  } catch (error) {
-    console.error('Error loading saved data:', error)
+// Helper function to deeply merge uploaded data with default structure
+const mergeWithDefaults = (defaults, uploaded) => {
+  if (!uploaded || typeof uploaded !== 'object' || Array.isArray(uploaded)) {
+    return uploaded !== undefined ? uploaded : defaults
   }
 
+  const result = { ...defaults }
+  
+  for (const key in defaults) {
+    if (uploaded.hasOwnProperty(key)) {
+      if (Array.isArray(defaults[key])) {
+        // Keep arrays as-is from uploaded data
+        result[key] = uploaded[key]
+      } else if (typeof defaults[key] === 'object' && defaults[key] !== null) {
+        // Recursively merge nested objects
+        result[key] = mergeWithDefaults(defaults[key], uploaded[key])
+      } else {
+        // Use uploaded value for primitives
+        result[key] = uploaded[key]
+      }
+    }
+  }
+  
+  return result
+}
+
+const getDefaultState = () => {
   return {
     basicInfo: {
       charName: '',
@@ -129,10 +147,28 @@ const getInitialState = () => {
   }
 }
 
+const getInitialState = () => {
+  try {
+    const saved = localStorage.getItem(AUTOSAVE_KEY)
+    if (saved) {
+      const parsed = JSON.parse(saved)
+      // Merge saved data with defaults to ensure all fields exist
+      return mergeWithDefaults(getDefaultState(), parsed)
+    }
+  } catch (error) {
+    console.error('Error loading saved data:', error)
+    // Clear corrupted data
+    localStorage.removeItem(AUTOSAVE_KEY)
+  }
+
+  return getDefaultState()
+}
+
 function App() {
   const [character, setCharacter] = useState(getInitialState)
   const [currentPage, setCurrentPage] = useState('attributes')
   const [sidebarOpen, setSidebarOpen] = useState(false)
+  const [showClearConfirm, setShowClearConfirm] = useState(false)
 
   // Debounced autosave - only saves 1 second after user stops typing
   useEffect(() => {
@@ -177,7 +213,7 @@ function App() {
       document.body.removeChild(link)
       URL.revokeObjectURL(url)
     } catch (error) {
-      alert('Error saving backup: ' + error.message)
+      console.error('Error saving backup:', error)
     }
   }
 
@@ -192,12 +228,14 @@ function App() {
       const reader = new FileReader()
       reader.onload = (event) => {
         try {
-          const data = JSON.parse(event.target.result)
-          setCharacter(data)
-          localStorage.setItem(AUTOSAVE_KEY, event.target.result)
-          alert('Backup loaded successfully!')
+          const uploadedData = JSON.parse(event.target.result)
+          // Merge uploaded data with default structure to prevent missing fields
+          const mergedData = mergeWithDefaults(getDefaultState(), uploadedData)
+          setCharacter(mergedData)
+          localStorage.setItem(AUTOSAVE_KEY, JSON.stringify(mergedData))
+          console.log('Backup loaded successfully')
         } catch (error) {
-          alert('Error loading backup: ' + error.message)
+          console.error('Error loading backup:', error)
         }
       }
       reader.readAsText(file)
@@ -206,15 +244,31 @@ function App() {
   }
 
   const clearSheet = () => {
-    if (confirm('WARNING: This will clear ALL data and reset the character sheet to blank.\n\nThis action cannot be undone!\n\nDo you want to continue?')) {
-      setCharacter(getInitialState())
-      localStorage.removeItem(AUTOSAVE_KEY)
-      alert('Character sheet cleared!')
-    }
+    setShowClearConfirm(true)
+  }
+
+  const handleClearConfirm = () => {
+    const blankState = getDefaultState()
+    setCharacter(blankState)
+    // Immediately save blank state to localStorage to prevent race conditions
+    localStorage.setItem(AUTOSAVE_KEY, JSON.stringify(blankState))
+    setShowClearConfirm(false)
+  }
+
+  const handleClearCancel = () => {
+    setShowClearConfirm(false)
   }
 
   return (
     <div className="app">
+      <ConfirmModal
+        isOpen={showClearConfirm}
+        title="⚠️ Clear Character Sheet"
+        message="WARNING: This will clear ALL data and reset the character sheet to blank.\n\nThis action cannot be undone!\n\nDo you want to continue?"
+        onConfirm={handleClearConfirm}
+        onCancel={handleClearCancel}
+      />
+
       <Sidebar
         isOpen={sidebarOpen}
         onClose={() => setSidebarOpen(false)}

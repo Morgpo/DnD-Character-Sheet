@@ -1,19 +1,19 @@
 :root {
-  /* Dark Medieval Fantasy Theme */
-  --bg-dark: #1a1410;
-  --bg-card: #2a2118;
-  --bg-card-hover: #332820;
-  --bg-input: #1f1b16;
-  --text-primary: #e8d4b0;
-  --text-secondary: #b8a888;
-  --text-gold: #d4af37;
-  --border-color: #4a3f2f;
-  --border-highlight: #6b5940;
-  --accent-dark: #3d2f1f;
-  --accent-gold: #b8941f;
-  --accent-gold-hover: #d4af37;
-  --success-green: #5a8f5a;
-  --danger-red: #8f3a3a;
+  /* Core Theme - Dark Medieval Fantasy */
+  --bg-primary: #1a1410;      /* Main backgrounds */
+  --bg-secondary: #2a2118;    /* Cards, sections, sidebar */
+  --bg-light: #d4a574;        /* Modals, light sections */
+  
+  --text-light: #e8d4b0;      /* Primary text */
+  --text-dark: #2c1810;       /* Text on light backgrounds */
+  
+  --accent: #d4af37;          /* Gold - buttons, highlights */
+  --border: #4a3f2f;          /* All borders */
+  
+  --success: #5a8f5a;         /* Success states */
+  --danger: #8f3a3a;          /* Error/delete states */
+  --neutral: #6c757d;         /* Cancel/disabled states */
+  
   --shadow: rgba(0, 0, 0, 0.5);
 }
 
@@ -25,8 +25,8 @@
 
 body {
   font-family: 'EB Garamond', serif;
-  background: linear-gradient(135deg, var(--bg-dark) 0%, #0f0d0a 100%);
-  color: var(--text-primary);
+  background: var(--bg-primary);
+  color: var(--text-light);
   line-height: 1.6;
   min-height: 100vh;
 }
@@ -40,16 +40,16 @@ input, textarea, select {
   font-family: 'EB Garamond', serif;
   font-size: 1rem;
   padding: 0.5rem;
-  border: 1px solid var(--border-color);
+  border: 1px solid var(--border);
   border-radius: 4px;
-  background: var(--bg-input);
-  color: var(--text-primary);
+  background: var(--bg-primary);
+  color: var(--text-light);
   transition: all 0.2s;
 }
 
 input:focus, textarea:focus, select:focus {
   outline: none;
-  border-color: var(--accent-gold);
+  border-color: var(--accent);
   box-shadow: 0 0 8px rgba(212, 175, 55, 0.3);
 }
 
@@ -57,7 +57,7 @@ input[type="checkbox"] {
   width: 1.2rem;
   height: 1.2rem;
   cursor: pointer;
-  accent-color: var(--accent-gold);
+  accent-color: var(--accent);
   filter: brightness(0.8);
 }
 
@@ -72,15 +72,17 @@ button {
 
 .auto-filled {
   background-color: rgba(42, 33, 24, 0.5) !important;
-  border: 2px solid var(--text-gold) !important;
-  color: var(--text-secondary) !important;
+  border: 2px solid var(--accent) !important;
+  color: var(--text-light) !important;
+  opacity: 0.7;
   cursor: not-allowed;
 }
 
 .auto-filled-example {
   background-color: rgba(42, 33, 24, 0.5);
-  border: 2px solid var(--text-gold);
-  color: var(--text-secondary);
+  border: 2px solid var(--accent);
+  color: var(--text-light);
+  opacity: 0.7;
   padding: 0.2rem 0.5rem;
   border-radius: 4px;
   display: inline-block;

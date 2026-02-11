@@ -76,7 +76,7 @@ export default function Attacks({ attacks, attributes, proficiency, onChange }) 
               <th>Name</th>
               <th>Stat</th>
               <th>Type</th>
-              <th>To Hit / DC</th>
+              <th>Hit / DC</th>
               <th>Damage</th>
               <th>Note</th>
               <th></th>

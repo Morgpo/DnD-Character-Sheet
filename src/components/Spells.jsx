@@ -14,10 +14,11 @@ const SpellLevel = ({ level, levelName, spells, onChange, addSpell, updateSpell,
               <label>Slots:</label>
               <input
                 key={`slot-count-${level}`}
+                placeholder="0"
                 type="number"
                 min="0"
                 max="20"
-                value={slots.length}
+                value={slots.length || ''}
                 onChange={(e) => updateSlotCount(level, e.target.value)}
                 className="slot-count"
               />
@@ -154,7 +155,7 @@ export default function Spells({ spells, attributes, proficiency, onChange }) {
   }
 
   const updateSlotCount = (level, count) => {
-    const numSlots = parseInt(count) || 0
+    const numSlots = Math.max(0, Math.min(99, parseInt(count) || 0))
     const newSlots = Array(numSlots).fill(false)
     onChange(`spells.slots.${level}`, newSlots)
   }
