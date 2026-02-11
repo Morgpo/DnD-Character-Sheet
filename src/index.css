@@ -1,0 +1,100 @@
+:root {
+  /* Core Theme - Dark Medieval Fantasy */
+  --bg-primary: #1a1410;      /* Main backgrounds */
+  --bg-secondary: #2a2118;    /* Cards, sections, sidebar */
+  --bg-light: #d4a574;        /* Modals, light sections */
+  
+  --text-light: #e8d4b0;      /* Primary text */
+  --text-dark: #2c1810;       /* Text on light backgrounds */
+  
+  --accent: #d4af37;          /* Gold - buttons, highlights */
+  --border: #4a3f2f;          /* All borders */
+  
+  --success: #5a8f5a;         /* Success states */
+  --danger: #8f3a3a;          /* Error/delete states */
+  --neutral: #6c757d;         /* Cancel/disabled states */
+  
+  --shadow: rgba(0, 0, 0, 0.5);
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'EB Garamond', serif;
+  background: var(--bg-primary);
+  color: var(--text-light);
+  line-height: 1.6;
+  min-height: 100vh;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: 'Cinzel', serif;
+  font-weight: 600;
+}
+
+input, textarea, select {
+  font-family: 'EB Garamond', serif;
+  font-size: 1rem;
+  padding: 0.5rem;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  background: var(--bg-primary);
+  color: var(--text-light);
+  transition: all 0.2s;
+}
+
+input:focus, textarea:focus, select:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 8px rgba(212, 175, 55, 0.3);
+}
+
+input[type="checkbox"] {
+  width: 1.2rem;
+  height: 1.2rem;
+  cursor: pointer;
+  accent-color: var(--accent);
+  filter: brightness(0.8);
+}
+
+button {
+  font-family: 'Cinzel', serif;
+  cursor: pointer;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  transition: all 0.2s;
+}
+
+.auto-filled {
+  background-color: rgba(42, 33, 24, 0.5) !important;
+  border: 2px solid var(--accent) !important;
+  color: var(--text-light) !important;
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.auto-filled-example {
+  background-color: rgba(42, 33, 24, 0.5);
+  border: 2px solid var(--accent);
+  color: var(--text-light);
+  opacity: 0.7;
+  padding: 0.2rem 0.5rem;
+  border-radius: 4px;
+  display: inline-block;
+}
+
+/* Hide number input spinners */
+input[type="number"]::-webkit-outer-spin-button,
+input[type="number"]::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+input[type="number"] {
+  -moz-appearance: textfield;
+}
