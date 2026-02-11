@@ -6,11 +6,10 @@
 
 ## Easy/High Priority
 
-- [ ] Keep the wiki page button there, but have it greyed out when there is no link
+- [ ] think
 
 --- 
 ---
-
 
 ## Brainstorming/Low Priority
 
@@ -33,10 +32,14 @@
         - Actions
         - Resources/Charges
         - Spells
-        - Class Features
-        - Maybe even Skills and Proficiencies, but that might be a bit excessive and not as useful since those are more general and not specific to your character, but it would still be nice to have the option
+        - Class
+        - Race
     - Come up with a middle ground for these. Some like Class and Species we can definitely generate (and even if it's not a real link they'll be using a), but for sure some will need a link input.
 
+- [ ] Actual notetaking app too?
+    - Like make an actual good notetaking app within the character sheet
+
+---
 
 ## Done
 
