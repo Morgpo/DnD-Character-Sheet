@@ -79,7 +79,7 @@ export default function Charges({ charges, onChange }) {
             <input
               type="number"
               className="charge-max"
-              value={charge.max}
+              value={charge.max||''}
               onChange={(e) => updateCharge(chargeIndex, 'max', parseInt(e.target.value) || 0)}
               placeholder="Max"
               min="0"

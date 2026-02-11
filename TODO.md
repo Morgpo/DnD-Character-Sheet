@@ -13,6 +13,9 @@
 
 ## Brainstorming/Low Priority
 
+### The Idea:
+**Keep some sections, get rid of others -> Add in new sections to cover everything  -> Fill out those sections with relevant data -> Organize those sections (*pages, one long page, whatever*) -> Make sure branding is good, and that's it**
+
 - [ ] Refactor entire "page" concept to be more modular
         - Either have a single page with collapsible sections , or have multiple pages - but have it be coherent and make sense gameplay-wise
         - Like maybe "Overview" page with basic info that you fill out and just have a very general look at your character, and then have separate pages for "Combat" (attacks, HP, conditions), "Attributes" (Modifiers, Saves, stuff for out of combat but where you need your sheet), "Inventory" (equipment and resources), and "Backstory" (personality, backstory, notes)
@@ -36,8 +39,20 @@
         - Race
     - Come up with a middle ground for these. Some like Class and Species we can definitely generate (and even if it's not a real link they'll be using a), but for sure some will need a link input.
 
-- [ ] Actual notetaking app too?
-    - Like make an actual good notetaking app within the character sheet
+- [ ] Drag and Drop sections to reorder them
+    - Like have little drag handles on the side of each section (Attacks, Resources, Actions, Spells, etc.) that let you reorder them to your liking
+- [ ] Also maybe have a way to hide sections you don't use often, like if you never use Spells you can just hide that section to reduce clutter
+        - May be have a settings menu where you can toggle visibility of sections
+
+- [ ] Better notes
+
+- [ ] Mobile friendly design
+
+- [ ] Export to PDF functionality
+
+- [ ] 
+
+
 
 ---
 
