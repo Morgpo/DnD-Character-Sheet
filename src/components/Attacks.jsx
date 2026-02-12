@@ -5,8 +5,9 @@ const calculateMod = (score) => {
   return Math.floor((num - 10) / 2)
 }
 
-export default function Attacks({ attacks, attributes, proficiency, onChange }) {
+export default function Attacks({ attacks, attributes, proficiency, spellCasting, onChange }) {
   const prof = parseInt(proficiency) || 0
+  const spellAbility = spellCasting || 'none'
 
   const mods = useMemo(() => ({
     str: calculateMod(attributes.str),
@@ -55,6 +56,7 @@ export default function Attacks({ attacks, attributes, proficiency, onChange }) 
 
   const calculateToHit = (attack) => {
     if (attack.attackType === 'save') return '--'
+    if (attack.stat === 'custom') return attack.manualHit || ''
     const base = mods[attack.stat] || 0
     const total = base + prof
     return total >= 0 ? `+${total}` : `${total}`
@@ -62,38 +64,40 @@ export default function Attacks({ attacks, attributes, proficiency, onChange }) 
 
   const calculateSaveDC = (attack) => {
     if (attack.attackType === 'attack') return '--'
-    const base = mods[attack.stat] || 0
+    if (attack.stat === 'custom') return attack.manualDC || ''
+    if (spellAbility === 'none') return 'N/A'
+    const base = mods[spellAbility] || 0
     return 8 + base + prof
   }
 
   return (
-    <section className="card attacks-section">
+    <section className="card">
       <h3 className="section-title">Attacks</h3>
-      <div className="attacks-container">
-        <table className="attacks-table">
+      <div className="attack-abilities-container">
+        <table className="attack-abilities-table attacks">
           <thead>
             <tr>
-              <th>Name</th>
-              <th>Stat</th>
-              <th>Type</th>
-              <th>Hit / DC</th>
-              <th>Damage</th>
-              <th>Note</th>
-              <th></th>
+              <th className="col-name">Name</th>
+              <th className="col-stat">Stat</th>
+              <th className="col-type">Roll / Save</th>
+              <th className="col-dc">Hit / DC</th>
+              <th className="col-damage">Damage</th>
+              <th className="col-notes">Notes</th>
+              <th className="col-controls"></th>
             </tr>
           </thead>
           <tbody>
             {attacks.map((attack, index) => (
               <tr key={attack.id || index}>
-                <td>
+                <td className="col-name">
                   <input
                     type="text"
                     value={attack.name}
                     onChange={(e) => updateAttack(index, 'name', e.target.value)}
-                    placeholder="Attack name"
+                    placeholder="Name"
                   />
                 </td>
-                <td>
+                <td className="col-stat">
                   <select
                     value={attack.stat}
                     onChange={(e) => updateAttack(index, 'stat', e.target.value)}
@@ -104,9 +108,10 @@ export default function Attacks({ attacks, attributes, proficiency, onChange }) 
                     <option value="int">INT</option>
                     <option value="wis">WIS</option>
                     <option value="cha">CHA</option>
+                    <option value="custom">CUSTOM</option>
                   </select>
                 </td>
-                <td>
+                <td className="col-type">
                   <select
                     value={attack.attackType}
                     onChange={(e) => updateAttack(index, 'attackType', e.target.value)}
@@ -115,15 +120,20 @@ export default function Attacks({ attacks, attributes, proficiency, onChange }) 
                     <option value="save">Save DC</option>
                   </select>
                 </td>
-                <td>
+                <td className="col-dc">
                   <input
                     type="text"
-                    className="auto-filled"
+                    className={attack.stat === 'custom' ? '' : 'auto-filled'}
                     value={attack.attackType === 'attack' ? calculateToHit(attack) : calculateSaveDC(attack)}
-                    readOnly
+                    onChange={(e) => {
+                      if (attack.stat !== 'custom') return
+                      const field = attack.attackType === 'attack' ? 'manualHit' : 'manualDC'
+                      updateAttack(index, field, e.target.value)
+                    }}
+                    readOnly={attack.stat !== 'custom'}
                   />
                 </td>
-                <td>
+                <td className="col-damage">
                   <input
                     type="text"
                     value={attack.damage}
@@ -131,15 +141,15 @@ export default function Attacks({ attacks, attributes, proficiency, onChange }) 
                     placeholder="Damage"
                   />
                 </td>
-                <td>
+                <td className="col-notes">
                   <input
                     type="text"
                     value={attack.notes || ''}
                     onChange={(e) => updateAttack(index, 'notes', e.target.value)}
-                    placeholder="Notes"
+                    placeholder="Notes (e.g., Disadvantage on hit)"
                   />
                 </td>
-                <td>
+                <td className="col-controls">
                   <div className="action-buttons">
                     <button
                       className="move-btn"

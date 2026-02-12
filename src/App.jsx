@@ -107,8 +107,16 @@ const getDefaultState = () => {
     spellCasting: 'none',
     proficiencies: {
       languages: '',
-      armor: '',
-      weapons: '',
+      armor: {
+        light: false,
+        medium: false,
+        heavy: false,
+        shields: false
+      },
+      weapons: {
+        simple: false,
+        martial: false
+      },
       tools: ''
     },
     features: '',
@@ -328,26 +336,28 @@ function App() {
                   data={character.proficiencies}
                   onChange={updateCharacter}
                 />
+                </div>
                 <FeaturesTraits
                   data={character.features}
                   onChange={updateCharacter}
                 />
-              </div>
-              <Charges
+            </div>
+             <Charges
                 charges={character.charges}
                 onChange={updateCharacter}
               />
-            </div>
             <Attacks
               attacks={character.attacks}
               attributes={character.attributes}
               proficiency={character.topBar.proficiency}
+              spellCasting={character.spellCasting}
               onChange={updateCharacter}
             />
             <Actions
               actions={character.actions}
               attributes={character.attributes}
               proficiency={character.topBar.proficiency}
+              spellCasting={character.spellCasting}
               onChange={updateCharacter}
             />
           </div>

@@ -420,7 +420,7 @@
 /* Proficiencies */
 .proficiencies-grid {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
+  grid-template-columns: 1fr;
   gap: 1rem;
 }
 
@@ -428,6 +428,20 @@
   display: block;
   margin-bottom: 0.5rem;
   font-weight: bold;
+}
+
+.checkbox-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem 1rem;
+}
+
+.checkbox-list label {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  margin: 0;
+  font-weight: normal;
 }
 
 .prof-item textarea {
@@ -475,9 +489,10 @@
 
 .charge-boxes {
   flex: 1;
-  display: flex;
-  flex-wrap: wrap;
+  display: grid;
+  grid-template-columns: repeat(10, 20px);
   gap: 0.25rem;
+  max-width: 85px;
 }
 
 .delete-btn {
@@ -546,14 +561,14 @@
   filter: brightness(1.2);
 }
 
-/* Attacks */
-.attacks-table {
+/* Attack & Abilities Table */
+.attack-abilities-table {
   width: 100%;
   border-collapse: collapse;
   margin-bottom: 1rem;
 }
 
-.attacks-table th {
+.attack-abilities-table th {
   background: var(--bg-secondary);
   filter: brightness(1.3);
   color: var(--accent);
@@ -562,66 +577,46 @@
   border-bottom: 2px solid var(--accent);
 }
 
-.attacks-table td {
+.attack-abilities-table td {
   padding: 0.5rem;
   border-bottom: 1px solid var(--border);
 }
 
-.attacks-table input, .attacks-table select {
+.attack-abilities-table input, .attack-abilities-table select {
   width: 100%;
 }
 
-/* Make To Hit / DC column narrower */
-.attacks-table th:nth-child(4),
-.attacks-table td:nth-child(4) {
-  width: 90px;
+/* Shared column widths */
+.col-name {
+  width: 225px;
 }
 
-/* Actions */
-.actions-table {
-  width: 100%;
-  border-collapse: collapse;
-  margin-bottom: 1rem;
+.col-stat {
+  width: 95px;
 }
 
-.actions-table th {
-  background: var(--bg-secondary);
-  filter: brightness(1.3);
-  color: var(--accent);
-  padding: 0.75rem;
-  text-align: left;
-  border-bottom: 2px solid var(--accent);
+.col-type {
+  width: 135px;
 }
 
-.actions-table td {
-  padding: 0.5rem;
-  border-bottom: 1px solid var(--border);
+.col-dc {
+  width: 85px; 
 }
 
-.actions-table input, .actions-table select {
-  width: 100%;
-}
-
-/* Match Actions column sizes to Attacks */
-.actions-table th:nth-child(1),
-.actions-table td:nth-child(1) {
+.col-damage {
   width: 150px;
 }
 
-.actions-table th:nth-child(2),
-.actions-table td:nth-child(2) {
-  width: 80px;
-}
-
-.actions-table th:nth-child(3),
-.actions-table td:nth-child(3) {
-  width: 90px;
-}
-
-/* Description column takes remaining space */
-.actions-table th:nth-child(4),
-.actions-table td:nth-child(4) {
+.col-notes {
   width: auto;
+}
+
+.col-controls {
+  width: 50px;
+}
+
+.col-number {
+  width: 75px;
 }
 
 /* Equipment */

@@ -1,12 +1,20 @@
 # DnD Character Sheet TODO List
 
+## Formatting Outline
+Top Bar (keep it lean)
+        Character Sheet (basic character sheet dump - put a lot there)
+        Combat (Attacks, HP, AC, Spells - toggleable?, etc. Just anything that would be used in combat)
+        Attributes (STR, DEX, etc. Proficiencies, Class abilities/race abilities dump)
+        Inventory (Basically unchanged)
+        Notes (Backstory + conections w/ a giant text input at the bottom)
+
 
 
 
 
 ## Easy/High Priority
 
-- [ ] think
+- [ ] Misc formatting
 
 --- 
 ---
