@@ -52,6 +52,7 @@ const getDefaultState = () => {
       levelTwo: '',
       race: '',
       background: '',
+      classes: '',
       playerName: '',
       exp: '',
       alignment: '',
@@ -138,6 +139,10 @@ const getDefaultState = () => {
     },
     spells: {
       spellClass: '',
+      slotCounts: {
+        1: '', 2: '', 3: '', 4: '', 5: '',
+        6: '', 7: '', 8: '', 9: ''
+      },
       slots: {
         1: [], 2: [], 3: [], 4: [], 5: [],
         6: [], 7: [], 8: [], 9: []
@@ -319,6 +324,7 @@ function App() {
           topBar={character.topBar}
           status={character.status}
           attributes={character.attributes}
+          skills={character.skills}
           onChange={updateCharacter}
         />
 
@@ -326,6 +332,7 @@ function App() {
           <div className="page">
             <Attributes
               attributes={character.attributes}
+              basicInfo={character.basicInfo}
               onChange={updateCharacter}
             />
             <SavesAndSkills

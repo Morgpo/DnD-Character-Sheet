@@ -1,4 +1,13 @@
 export default function Equipment({ data, onChange }) {
+  const normalizeWeightInput = (value) => {
+    if (value === '') {
+      return ''
+    }
+
+    const parsed = parseFloat(value)
+    return Number.isNaN(parsed) ? '' : parsed
+  }
+
   const addItem = () => {
     const newItems = [
       ...data.items,
@@ -115,12 +124,10 @@ export default function Equipment({ data, onChange }) {
                   </td>
                   <td>
                     <input
-                      type="number"
+                      type="text"
                       value={item.weight}
-                      onChange={(e) => updateItem(index, 'weight', parseFloat(e.target.value) || 0)}
+                      onChange={(e) => updateItem(index, 'weight', normalizeWeightInput(e.target.value))}
                       placeholder="0"
-                      step="0.1"
-                      min="0"
                     />
                   </td>
                   <td>

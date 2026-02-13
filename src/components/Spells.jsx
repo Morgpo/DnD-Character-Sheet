@@ -2,6 +2,7 @@ const SpellLevel = ({ level, levelName, spells, onChange, addSpell, updateSpell,
     const key = level === 0 ? 'cantrips' : `level${level}`
     const levelSpells = spells[key] || []
     const slots = spells.slots[level] || []
+    const slotCountValue = spells.slotCounts?.[level] ?? (slots.length ? String(slots.length) : '')
 
     return (
       <div className="spell-level">
@@ -17,7 +18,7 @@ const SpellLevel = ({ level, levelName, spells, onChange, addSpell, updateSpell,
                 placeholder="0"
                 type="number"
                 min="0"
-                value={slots.length || ''}
+                value={slotCountValue}
                 onChange={(e) => updateSlotCount(level, e.target.value)}
                 className="slot-count"
               />
@@ -39,11 +40,15 @@ const SpellLevel = ({ level, levelName, spells, onChange, addSpell, updateSpell,
             <div key={spell.id || index} className="spell-item">
               <div className="spell-controls">
                 {level > 0 && (
-                  <input
-                    type="checkbox"
-                    checked={spell.prepared}
-                    onChange={(e) => updateSpell(level, index, 'prepared', e.target.checked)}
-                    title="Prepared"
+                  <div 
+                    className={`prepared-checkbox ${spell.prepared || 'none'}`}
+                    onClick={() => {
+                      const states = ['none', 'prepared', 'always']
+                      const currentIndex = states.indexOf(spell.prepared || 'none')
+                      const nextState = states[(currentIndex + 1) % states.length]
+                      updateSpell(level, index, 'prepared', nextState === 'none' ? '' : nextState)
+                    }}
+                    title={spell.prepared === 'always' ? 'Always Prepared' : spell.prepared === 'prepared' ? 'Can be Prepared' : 'Not Prepared'}
                   />
                 )}
               </div>
@@ -149,7 +154,7 @@ export default function Spells({ spells, attributes, proficiency, spellCasting, 
         id: Date.now(),
         name: '',
         link: '',
-        prepared: false
+        prepared: ''
       }
     ]
     onChange(`spells.${key}`, newSpells)
@@ -180,13 +185,31 @@ export default function Spells({ spells, attributes, proficiency, spellCasting, 
 
   const toggleSlot = (level, index) => {
     const newSlots = [...(spells.slots[level] || [])]
-    newSlots[index] = !newSlots[index]
+    const isChecked = Boolean(newSlots[index])
+
+    if (isChecked) {
+      for (let i = index; i < newSlots.length; i += 1) {
+        newSlots[i] = false
+      }
+    } else {
+      for (let i = 0; i <= index; i += 1) {
+        newSlots[i] = true
+      }
+    }
+
     onChange(`spells.slots.${level}`, newSlots)
   }
 
   const updateSlotCount = (level, count) => {
-    const numSlots = Math.max(0, Math.min(82, parseInt(count) || 0))
+    if (count === '') {
+      onChange(`spells.slotCounts.${level}`, '')
+      onChange(`spells.slots.${level}`, [])
+      return
+    }
+
+    const numSlots = Math.max(0, Math.min(82, parseInt(count, 10) || 0))
     const newSlots = Array(numSlots).fill(false)
+    onChange(`spells.slotCounts.${level}`, String(numSlots))
     onChange(`spells.slots.${level}`, newSlots)
   }
 
