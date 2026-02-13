@@ -2,12 +2,44 @@ export default function FeaturesTraits({ data, onChange }) {
   return (
     <section className="card">
       <h3 className="section-title">Features & Traits</h3>
-      <textarea
-        value={data}
-        onChange={(e) => onChange('features', e.target.value)}
-        rows="15"
-        placeholder="Enter your character's features, traits, racial abilities, class features, etc."
-      />
+      <div className="features-grid">
+        <div className="feature-item">
+          <label>Feats</label>
+          <textarea
+            value={data.feats || ''}
+            onChange={(e) => onChange('features.feats', e.target.value)}
+            rows="4"
+            placeholder="Lucky, Alert, Sentinel, etc."
+          />
+        </div>
+        <div className="feature-item">
+          <label>Racial Traits</label>
+          <textarea
+            value={data.racialTraits || ''}
+            onChange={(e) => onChange('features.racialTraits', e.target.value)}
+            rows="4"
+            placeholder="Darkvision, Fey Ancestry, etc."
+          />
+        </div>
+        <div className="feature-item">
+          <label>Class Features</label>
+          <textarea
+            value={data.classFeatures || ''}
+            onChange={(e) => onChange('features.classFeatures', e.target.value)}
+            rows="4"
+            placeholder="Rage, Sneak Attack, Spellcasting, etc."
+          />
+        </div>
+        <div className="feature-item">
+          <label>Background Features</label>
+          <textarea
+            value={data.backgroundFeatures || ''}
+            onChange={(e) => onChange('features.backgroundFeatures', e.target.value)}
+            rows="4"
+            placeholder="Feature from your background"
+          />
+        </div>
+      </div>
     </section>
   )
 }

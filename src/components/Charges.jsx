@@ -6,7 +6,8 @@ export default function Charges({ charges, onChange }) {
         id: Date.now(),
         name: '',
         max: 0,
-        current: 0
+        current: 0,
+        notes: ''
       }
     ]
     onChange('charges', newCharges)

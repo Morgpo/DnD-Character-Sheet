@@ -1,101 +1,145 @@
-export default function CharacterBasicInfo({ data, onChange }) {
+function StatBox({ label, value, onChange: onStatChange, readOnly }) {
   return (
-    <header className="character-header">
-      <div className="card">
-        <div className="info-group">
-          <input
-            type="text"
-            value={data.charName}
-            onChange={(e) => onChange('basicInfo.charName', e.target.value)}
-            placeholder="Character Name"
-          />
-          <label>Character Name</label>
-        </div>
-        <div className="info-group">
-          <input
-            type="number"
-            min="1"
-            max="20"
-            value={data.currentLevel}
-            onChange={(e) => onChange('basicInfo.currentLevel', e.target.value)}
-          />
-          <label>Current Level</label>
-        </div>
-        <div className="info-group">
-          <input
-            type="text"
-            value={data.level}
-            onChange={(e) => onChange('basicInfo.level', e.target.value)}
-            placeholder="Class/Level"
-          />
-          <label>Class/Level</label>
-        </div>
-        <div className="info-group">
-          <input
-            type="text"
-            value={data.levelTwo}
-            onChange={(e) => onChange('basicInfo.levelTwo', e.target.value)}
-            placeholder="Class/Level"
-          />
-          <label>Multiclass</label>
-        </div>
+    <div className="stat-box-header">
+      <input
+        type="text"
+        value={value}
+        onChange={readOnly ? undefined : (e) => onStatChange(e.target.value)}
+        placeholder={label}
+        readOnly={readOnly}
+        className={readOnly ? "auto-filled" : ""}
+      />
+      <label>{label}</label>
+    </div>
+  )
+}
+
+function HPBox({ label, value, onChange: onStatChange }) {
+  return (
+    <div className="hp-box-header">
+      <input
+        type="number"
+        value={value}
+        onChange={(e) => onStatChange(e.target.value)}
+      />
+      <label>{label}</label>
+    </div>
+  )
+}
+
+import { useEffect } from 'react'
+
+export default function CharacterBasicInfo({ data, topBar, status, attributes, onChange }) {
+  // Calculate proficiency from level
+  const calculateProficiency = (level) => {
+    const lvl = parseInt(level) || 1
+    return Math.ceil(lvl / 4) + 1
+  }
+
+  // Calculate modifier from attribute score
+  const calculateMod = (score) => {
+    const num = parseInt(score) || 10
+    const mod = Math.floor((num - 10) / 2)
+    return mod >= 0 ? `+${mod}` : `${mod}`
+  }
+
+  const proficiencyBonus = calculateProficiency(data.currentLevel)
+  const proficiency = `+${proficiencyBonus}`
+  const initiative = calculateMod(attributes?.dex || 10)
+  const passivePerception = 10 + (parseInt(calculateMod(attributes?.wis || 10)) || 0)
+
+  // Auto-update topBar.proficiency when level changes
+  useEffect(() => {
+    const profValue = proficiencyBonus.toString()
+    if (topBar.proficiency !== profValue) {
+      onChange('topBar.proficiency', profValue)
+    }
+  }, [data.currentLevel])
+
+  return (
+    <header className="character-header-banner">
+      <div className="character-name-section">
+        <input
+          type="text"
+          value={data.charName}
+          onChange={(e) => onChange('basicInfo.charName', e.target.value)}
+          placeholder="Character Name"
+          className="character-name-input"
+        />
       </div>
 
-      <div className="card">
-        <div className="info-group">
-          <input
-            type="text"
-            value={data.race}
-            onChange={(e) => onChange('basicInfo.race', e.target.value)}
-            placeholder="Race"
-          />
-          <label>Race</label>
+      <div className="header-stats-row">
+        <StatBox
+          label="Level"
+          value={data.currentLevel}
+          onChange={(val) => onChange('basicInfo.currentLevel', val)}
+        />
+        <StatBox
+          label="Experience"
+          value={data.exp}
+          onChange={(val) => onChange('basicInfo.exp', val)}
+        />
+        <StatBox
+          label="Inspiration"
+          value={topBar.inspiration}
+          onChange={(val) => onChange('topBar.inspiration', val)}
+        />
+      </div>
+
+      <div className="header-stats-row">
+        <StatBox
+          label="AC"
+          value={topBar.ac}
+          onChange={(val) => onChange('topBar.ac', val)}
+        />
+        <div className="hp-group-header">
+          <label>Hit Points</label>
+          <div className="hp-inputs">
+            <HPBox
+              label="Temp"
+              value={status.tempHP}
+              onChange={(val) => onChange('status.tempHP', val)}
+            />
+            <HPBox
+              label="Current"
+              value={status.currentHP}
+              onChange={(val) => onChange('status.currentHP', val)}
+            />
+            <HPBox
+              label="Max"
+              value={status.maxHP}
+              onChange={(val) => onChange('status.maxHP', val)}
+            />
+          </div>
         </div>
-        <div className="info-group">
-          <input
-            type="text"
-            value={data.background}
-            onChange={(e) => onChange('basicInfo.background', e.target.value)}
-            placeholder="Background"
-          />
-          <label>Background</label>
-        </div>
-        <div className="info-group">
-          <input
-            type="text"
-            value={data.playerName}
-            onChange={(e) => onChange('basicInfo.playerName', e.target.value)}
-            placeholder="Player Name"
-          />
-          <label>Player Name</label>
-        </div>
-        <div className="info-group">
-          <input
-            type="text"
-            value={data.exp}
-            onChange={(e) => onChange('basicInfo.exp', e.target.value)}
-            placeholder="Experience"
-          />
-          <label>Experience</label>
-        </div>
-        <div className="info-group">
-          <input
-            type="text"
-            value={data.alignment}
-            onChange={(e) => onChange('basicInfo.alignment', e.target.value)}
-            placeholder="Alignment"
-          />
-          <label>Alignment</label>
-        </div>
-        <div className="info-group">
-          <input
-            type="text"
-            value={data.deity}
-            onChange={(e) => onChange('basicInfo.deity', e.target.value)}
-            placeholder="Deity"
-          />
-          <label>Deity</label>
-        </div>
+        <StatBox
+          label="Speed"
+          value={topBar.speed}
+          onChange={(val) => onChange('topBar.speed', val)}
+        />
+        <StatBox
+          label="Size"
+          value={data.size}
+          onChange={(val) => onChange('basicInfo.size', val)}
+        />
+      </div>
+
+      <div className="header-stats-row">
+        <StatBox
+          label="Proficiency"
+          value={proficiency}
+          readOnly={true}
+        />
+        <StatBox
+          label="Initiative"
+          value={topBar.initiative}
+          onChange={(val) => onChange('topBar.initiative', val)}
+        />
+        <StatBox
+          label="Passive Perception"
+          value={passivePerception}
+          readOnly={true}
+        />
       </div>
     </header>
   )

@@ -1,12 +1,8 @@
 # DnD Character Sheet TODO List
 
-
-
-
-
 ## Easy/High Priority
 
-- [ ] think
+- [ ] make a character
 
 --- 
 ---

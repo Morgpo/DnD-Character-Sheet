@@ -5,8 +5,9 @@ const calculateMod = (score) => {
   return Math.floor((num - 10) / 2)
 }
 
-export default function Actions({ actions, attributes, proficiency, onChange }) {
+export default function Actions({ actions, attributes, proficiency, spellCasting, onChange }) {
   const prof = parseInt(proficiency) || 0
+  const spellAbility = spellCasting || 'none'
 
   const mods = useMemo(() => ({
     str: calculateMod(attributes.str),
@@ -52,36 +53,38 @@ export default function Actions({ actions, attributes, proficiency, onChange }) 
   }
 
   const calculateSaveDC = (action) => {
-    const base = mods[action.stat] || 0
+    if (action.stat === 'custom') return action.manualDC || ''
+    if (spellAbility === 'none') return 'N/A'
+    const base = mods[spellAbility] || 0
     return 8 + base + prof
   }
 
   return (
-    <section className="card actions-section">
+    <section className="card">
       <h3 className="section-title">Actions & Abilities</h3>
-      <div className="actions-container">
-        <table className="actions-table">
+      <div className="attack-abilities-container">
+        <table className="attack-abilities-table actions">
           <thead>
             <tr>
-              <th>Ability Name</th>
-              <th>Stat</th>
-              <th>Save DC</th>
-              <th>Description/Effect</th>
-              <th></th>
+              <th className="col-name">Name</th>
+              <th className="col-stat">Stat</th>
+              <th className="col-dc">Save DC</th>
+              <th className="col-notes">Notes</th>
+              <th className="col-controls"></th>
             </tr>
           </thead>
           <tbody>
             {actions.map((action, index) => (
               <tr key={action.id || index}>
-                <td>
+                <td className="col-name">
                   <input
                     type="text"
                     value={action.name}
                     onChange={(e) => updateAction(index, 'name', e.target.value)}
-                    placeholder="Ability name"
+                    placeholder="Name"
                   />
                 </td>
-                <td>
+                <td className="col-stat">
                   <select
                     value={action.stat}
                     onChange={(e) => updateAction(index, 'stat', e.target.value)}
@@ -92,14 +95,19 @@ export default function Actions({ actions, attributes, proficiency, onChange }) 
                     <option value="int">INT</option>
                     <option value="wis">WIS</option>
                     <option value="cha">CHA</option>
+                    <option value="custom">CUSTOM</option>
                   </select>
                 </td>
-                <td>
+                <td className="col-dc">
                   <input
                     type="text"
-                    className="auto-filled"
+                    className={action.stat === 'custom' ? '' : 'auto-filled'}
                     value={calculateSaveDC(action)}
-                    readOnly
+                    onChange={(e) => {
+                      if (action.stat !== 'custom') return
+                      updateAction(index, 'manualDC', e.target.value)
+                    }}
+                    readOnly={action.stat !== 'custom'}
                   />
                 </td>
                 <td>
@@ -107,10 +115,10 @@ export default function Actions({ actions, attributes, proficiency, onChange }) 
                     type="text"
                     value={action.description}
                     onChange={(e) => updateAction(index, 'description', e.target.value)}
-                    placeholder="Effect (e.g., Paralyze on fail)"
+                    placeholder="Notes (e.g., Paralyze on fail)"
                   />
                 </td>
-                <td>
+                <td className="col-controls">
                   <div className="action-buttons">
                     <button
                       className="move-btn"

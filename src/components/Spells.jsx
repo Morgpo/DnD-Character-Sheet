@@ -17,7 +17,6 @@ const SpellLevel = ({ level, levelName, spells, onChange, addSpell, updateSpell,
                 placeholder="0"
                 type="number"
                 min="0"
-                max="20"
                 value={slots.length || ''}
                 onChange={(e) => updateSlotCount(level, e.target.value)}
                 className="slot-count"
@@ -47,22 +46,6 @@ const SpellLevel = ({ level, levelName, spells, onChange, addSpell, updateSpell,
                     title="Prepared"
                   />
                 )}
-                <button
-                  className="move-btn"
-                  onClick={() => moveSpell(level, index, 'up')}
-                  disabled={index === 0}
-                  title="Move up"
-                >
-                  ↑
-                </button>
-                <button
-                  className="move-btn"
-                  onClick={() => moveSpell(level, index, 'down')}
-                  disabled={index === levelSpells.length - 1}
-                  title="Move down"
-                >
-                  ↓
-                </button>
               </div>
               <input
                 type="text"
@@ -89,6 +72,22 @@ const SpellLevel = ({ level, levelName, spells, onChange, addSpell, updateSpell,
                 </button>
               </div>
               <button
+                  className="move-btn"
+                  onClick={() => moveSpell(level, index, 'up')}
+                  disabled={index === 0}
+                  title="Move up"
+                >
+                  ↑
+                </button>
+                <button
+                  className="move-btn"
+                  onClick={() => moveSpell(level, index, 'down')}
+                  disabled={index === levelSpells.length - 1}
+                  title="Move down"
+                >
+                  ↓
+                </button>
+              <button
                 className="delete-btn"
                 onClick={() => deleteSpell(level, index)}
                 title="Delete spell"
@@ -105,10 +104,41 @@ const SpellLevel = ({ level, levelName, spells, onChange, addSpell, updateSpell,
     )
   }
 
-export default function Spells({ spells, attributes, proficiency, onChange }) {
+export default function Spells({ spells, attributes, proficiency, spellCasting, onChange }) {
   const calculateMod = (score) => {
     const num = parseInt(score) || 10
     return Math.floor((num - 10) / 2)
+  }
+
+  const calculateSpellDC = () => {
+    if (spellCasting === 'none') return 'N/A'
+    const mods = {
+      str: calculateMod(attributes.str),
+      dex: calculateMod(attributes.dex),
+      con: calculateMod(attributes.con),
+      int: calculateMod(attributes.int),
+      wis: calculateMod(attributes.wis),
+      cha: calculateMod(attributes.cha)
+    }
+    const base = mods[spellCasting] || 0
+    const prof = parseInt(proficiency) || 0
+    return 8 + base + prof
+  }
+
+  const calculateSpellBonus = () => {
+    if (spellCasting === 'none') return 'N/A'
+    const mods = {
+      str: calculateMod(attributes.str),
+      dex: calculateMod(attributes.dex),
+      con: calculateMod(attributes.con),
+      int: calculateMod(attributes.int),
+      wis: calculateMod(attributes.wis),
+      cha: calculateMod(attributes.cha)
+    }
+    const base = mods[spellCasting] || 0
+    const prof = parseInt(proficiency) || 0
+    const total = base + prof
+    return total >= 0 ? `+${total}` : `${total}`
   }
 
   const addSpell = (level) => {
@@ -155,7 +185,7 @@ export default function Spells({ spells, attributes, proficiency, onChange }) {
   }
 
   const updateSlotCount = (level, count) => {
-    const numSlots = Math.max(0, Math.min(99, parseInt(count) || 0))
+    const numSlots = Math.max(0, Math.min(82, parseInt(count) || 0))
     const newSlots = Array(numSlots).fill(false)
     onChange(`spells.slots.${level}`, newSlots)
   }
@@ -165,6 +195,39 @@ export default function Spells({ spells, attributes, proficiency, onChange }) {
       <section className="card">
         <h3 className="section-title">Spell Info</h3>
         <div className="spell-info-grid">
+          <div className="info-group">
+            <label>Spellcasting Ability</label>
+            <select
+              value={spellCasting}
+              onChange={(e) => onChange('spellCasting', e.target.value)}
+            >
+              <option value="none">No Spellcasting</option>
+              <option value="str">Strength</option>
+              <option value="dex">Dexterity</option>
+              <option value="con">Constitution</option>
+              <option value="int">Intelligence</option>
+              <option value="wis">Wisdom</option>
+              <option value="cha">Charisma</option>
+            </select>
+          </div>
+          <div className="info-group">
+            <label>Spell DC</label>
+            <input
+              type="text"
+              className="auto-filled"
+              value={calculateSpellDC()}
+              readOnly
+            />
+          </div>
+          <div className="info-group">
+            <label>Spell Attack</label>
+            <input
+              type="text"
+              className="auto-filled"
+              value={calculateSpellBonus()}
+              readOnly
+            />
+          </div>
           <div className="info-group">
             <label>Spellcasting Class</label>
             <input
