@@ -2,26 +2,21 @@
 
 ## Easy/High Priority
 
-- [ ] make a character
+- [x] Fix the botched pull request
+
+- [ ] Add in Drag and Drop for Attacks, spells, etc
+
+- [ ] Be able to Hide Spell levels and cantrips through a popup on the Spell Sheet
+        - Apply this to other places too
+
+- [ ] more info per spell (casting time, actions)
+
+
 
 --- 
 ---
 
 ## Brainstorming/Low Priority
-
-### The Idea:
-**Keep some sections, get rid of others -> Add in new sections to cover everything  -> Fill out those sections with relevant data -> Organize those sections (*pages, one long page, whatever*) -> Make sure branding is good, and that's it**
-
-- [ ] Refactor entire "page" concept to be more modular
-        - Either have a single page with collapsible sections , or have multiple pages - but have it be coherent and make sense gameplay-wise
-        - Like maybe "Overview" page with basic info that you fill out and just have a very general look at your character, and then have separate pages for "Combat" (attacks, HP, conditions), "Attributes" (Modifiers, Saves, stuff for out of combat but where you need your sheet), "Inventory" (equipment and resources), and "Backstory" (personality, backstory, notes)
-                - Overview
-                        - Overview kind of just has everything but in a very condensed form, so you can just look at it and get a general idea of your character. Maybe have the ability to customize what sections show up on the overview page?
-                - Combat
-                - Attributes
-                - Inventory
-                - Backstory
-        - And some pages can have overlapping info, which might be an issue, but it would be amazing for usability to have a more modular design where you can just focus on the info you need at the moment instead of having to scroll through everything or tab to the wrong page to find the info you need
 
 - [ ] Add Wiki Links to Everything
     - Maybe try to implement a way to have no input for the wiki link specifically, but based on the user's input for name try to create the wikidot link from that.
@@ -35,18 +30,12 @@
         - Race
     - Come up with a middle ground for these. Some like Class and Species we can definitely generate (and even if it's not a real link they'll be using a), but for sure some will need a link input.
 
-- [ ] Drag and Drop sections to reorder them
-    - Like have little drag handles on the side of each section (Attacks, Resources, Actions, Spells, etc.) that let you reorder them to your liking
-- [ ] Also maybe have a way to hide sections you don't use often, like if you never use Spells you can just hide that section to reduce clutter
-        - May be have a settings menu where you can toggle visibility of sections
-
-- [ ] Better notes
-
-- [ ] Mobile friendly design
-
 - [ ] Export to PDF functionality
 
-- [ ] 
+- [ ] Custom page
+
+- [ ] Import Spell Lists from Spellcasting Class
+        - For example, Paladins, Clerics, etc have all spells known, but can only have a few prepared. Import all of them based on their Class (not all classes work obviously) and let the user just check them as prepared
 
 
 

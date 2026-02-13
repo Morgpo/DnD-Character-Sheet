@@ -29,7 +29,7 @@ function HPBox({ label, value, onChange: onStatChange }) {
 
 import { useEffect } from 'react'
 
-export default function CharacterBasicInfo({ data, topBar, status, attributes, onChange }) {
+export default function CharacterBasicInfo({ data, topBar, status, attributes, skills, onChange }) {
   // Calculate proficiency from level
   const calculateProficiency = (level) => {
     const lvl = parseInt(level) || 1
@@ -46,7 +46,11 @@ export default function CharacterBasicInfo({ data, topBar, status, attributes, o
   const proficiencyBonus = calculateProficiency(data.currentLevel)
   const proficiency = `+${proficiencyBonus}`
   const initiative = calculateMod(attributes?.dex || 10)
-  const passivePerception = 10 + (parseInt(calculateMod(attributes?.wis || 10)) || 0)
+  
+  // Calculate passive perception with proficiency
+  const wisdomMod = parseInt(calculateMod(attributes?.wis || 10)) || 0
+  const perceptionProf = skills?.perception?.expert ? proficiencyBonus * 2 : (skills?.perception?.prof ? proficiencyBonus : 0)
+  const passivePerception = 10 + wisdomMod + perceptionProf
 
   // Auto-update topBar.proficiency when level changes
   useEffect(() => {

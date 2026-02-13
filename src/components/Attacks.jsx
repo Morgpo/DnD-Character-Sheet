@@ -28,7 +28,8 @@ export default function Attacks({ attacks, attributes, proficiency, spellCasting
         attackType: 'attack',
         damage: '',
         damageType: '',
-        notes: ''
+        notes: '',
+        addProf: true
       }
     ]
     onChange('attacks', newAttacks)
@@ -58,7 +59,8 @@ export default function Attacks({ attacks, attributes, proficiency, spellCasting
     if (attack.attackType === 'save') return '--'
     if (attack.stat === 'custom') return attack.manualHit || ''
     const base = mods[attack.stat] || 0
-    const total = base + prof
+    const profBonus = attack.addProf !== false ? prof : 0
+    const total = base + profBonus
     return total >= 0 ? `+${total}` : `${total}`
   }
 
@@ -80,6 +82,7 @@ export default function Attacks({ attacks, attributes, proficiency, spellCasting
               <th className="col-name">Name</th>
               <th className="col-stat">Stat</th>
               <th className="col-type">Roll / Save</th>
+              <th className="col-prof">Prof</th>
               <th className="col-dc">Hit / DC</th>
               <th className="col-damage">Damage</th>
               <th className="col-notes">Notes</th>
@@ -119,6 +122,13 @@ export default function Attacks({ attacks, attributes, proficiency, spellCasting
                     <option value="attack">Attack Roll</option>
                     <option value="save">Save DC</option>
                   </select>
+                </td>
+                <td className="col-prof">
+                  <input
+                    type="checkbox"
+                    checked={attack.addProf !== false}
+                    onChange={(e) => updateAttack(index, 'addProf', e.target.checked)}
+                  />
                 </td>
                 <td className="col-dc">
                   <input

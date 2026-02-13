@@ -368,6 +368,82 @@
   border: 1px solid var(--border);
 }
 
+/* Class & Background */
+.class-background-container {
+  display: grid;
+  grid-template-columns: 1fr 2fr;
+  gap: 2rem;
+  align-items: start;
+}
+
+.class-background-left {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.class-background-right {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  height: 100%;
+}
+
+.class-background-right label {
+  font-weight: 600;
+  color: var(--accent);
+  font-size: 0.95rem;
+}
+
+.class-background-right textarea {
+  flex: 1;
+  min-height: 200px;
+  padding: 0.75rem;
+  border: 2px solid var(--border);
+  border-radius: 6px;
+  background: var(--bg-primary);
+  color: var(--text-light);
+  font-size: 0.95rem;
+  font-family: 'EB Garamond', serif;
+  resize: vertical;
+  transition: all 0.2s;
+}
+
+.class-background-right textarea:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 8px rgba(212, 175, 55, 0.3);
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.form-group label {
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  color: var(--accent);
+  font-size: 0.95rem;
+}
+
+.form-group input {
+  width: 100%;
+  padding: 0.75rem;
+  border: 2px solid var(--border);
+  border-radius: 6px;
+  background: var(--bg-primary);
+  color: var(--text-light);
+  font-size: 1rem;
+  transition: all 0.2s;
+}
+
+.form-group input:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 8px rgba(212, 175, 55, 0.3);
+}
+
 /* Status */
 .status-grid {
   display: grid;
@@ -592,6 +668,32 @@
   box-shadow: 0 0 0 4px var(--bg-primary), 0 0 0 7px var(--text-light);
 }
 
+.prepared-checkbox {
+  width: 20px;
+  height: 20px;
+  border: 2px solid var(--border);
+  border-radius: 50%;
+  cursor: pointer;
+  position: relative;
+  background: transparent;
+  transition: all 0.2s ease;
+}
+
+.prepared-checkbox:hover {
+  border-color: var(--accent);
+}
+
+.prepared-checkbox.prepared {
+  background: var(--text-light);
+  border-color: var(--text-light);
+}
+
+.prepared-checkbox.always {
+  background: var(--text-light);
+  border-color: var(--text-light);
+  box-shadow: 0 0 0 4px var(--bg-primary), 0 0 0 7px var(--text-light);
+}
+
 .skill-attr {
   font-size: 0.85rem;
   color: var(--text-light);
@@ -723,7 +825,6 @@
   display: grid;
   grid-template-columns: repeat(10, 20px);
   gap: 0.25rem;
-  max-width: 85px;
 }
 
 .delete-btn {
@@ -828,6 +929,16 @@
 
 .col-type {
   width: 135px;
+}
+
+.col-prof {
+  width: 50px;
+  text-align: center;
+}
+
+.col-prof input[type="checkbox"] {
+  display: flex;
+  margin: 0 auto;
 }
 
 .col-dc {

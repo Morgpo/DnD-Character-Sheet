@@ -1,7 +1,13 @@
 export default function Status({ data, onChange }) {
   const toggleDeathSave = (type, index) => {
     const current = data.deathSaves[type]
-    const newValue = current === index + 1 ? 0 : index + 1
+    const newValue = index === 0 && current > 0
+      ? 0
+      : current > index + 1
+        ? index
+        : current === index + 1
+          ? 0
+          : index + 1
     onChange(`status.deathSaves.${type}`, newValue)
   }
 

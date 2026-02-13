@@ -35,68 +35,102 @@ export default function Charges({ charges, onChange }) {
 
   const toggleBox = (chargeIndex, boxIndex) => {
     const charge = charges[chargeIndex]
-    const newCurrent = charge.current === boxIndex + 1 ? boxIndex : boxIndex + 1
+    const newCurrent = boxIndex === 0 && charge.current > 0
+      ? 0
+      : charge.current > boxIndex + 1
+        ? boxIndex
+        : charge.current === boxIndex + 1
+          ? boxIndex
+          : boxIndex + 1
     updateCharge(chargeIndex, 'current', newCurrent)
   }
 
   return (
     <section className="card">
-      <h2>Resources & Charges</h2>
-      <div className="charges-container">
-        {charges.map((charge, chargeIndex) => (
-          <div key={charge.id || chargeIndex} className="charge-row">
-            <div className="charge-controls">
-              <button
-                className="move-btn"
-                onClick={() => moveCharge(chargeIndex, 'up')}
-                disabled={chargeIndex === 0}
-                title="Move up"
-              >
-                ↑
-              </button>
-              <button
-                className="move-btn"
-                onClick={() => moveCharge(chargeIndex, 'down')}
-                disabled={chargeIndex === charges.length - 1}
-                title="Move down"
-              >
-                ↓
-              </button>
-              <button 
-                className="delete-btn"
-                onClick={() => deleteCharge(chargeIndex)}
-                title="Delete"
-              >
-                ×
-              </button>
-            </div>
-            <input
-              type="text"
-              className="charge-name"
-              value={charge.name}
-              onChange={(e) => updateCharge(chargeIndex, 'name', e.target.value)}
-              placeholder="Resource name (e.g., Ki Points, Rage)"
-            />
-            <input
-              type="number"
-              className="charge-max"
-              value={charge.max||''}
-              onChange={(e) => updateCharge(chargeIndex, 'max', parseInt(e.target.value) || 0)}
-              placeholder="Max"
-              min="0"
-            />
-            <div className="charge-boxes">
-              {Array.from({ length: Math.min(parseInt(charge.max) || 0, 20) }).map((_, boxIndex) => (
-                <input
-                  key={boxIndex}
-                  type="checkbox"
-                  checked={boxIndex < charge.current}
-                  onChange={() => toggleBox(chargeIndex, boxIndex)}
-                />
-              ))}
-            </div>
-          </div>
-        ))}
+      <h3 className="section-title">Resources & Item Charges</h3>
+      <div className="attack-abilities-container">
+        <table className="attack-abilities-table charges">
+          <thead>
+            <tr>
+              <th className="col-name">Name</th>
+              <th className="col-stat">Max</th>
+              <th className="col-dc">Current</th>
+              <th className="col-notes">Notes</th>
+              <th className="col-controls"></th>
+            </tr>
+          </thead>
+          <tbody>
+            {charges.map((charge, chargeIndex) => (
+              <tr key={charge.id || chargeIndex}>
+                <td className="col-name">
+                  <input
+                    type="text"
+                    value={charge.name}
+                    onChange={(e) => updateCharge(chargeIndex, 'name', e.target.value)}
+                    placeholder="Name"
+                  />
+                </td>
+                <td className="col-stat">
+                  <input
+                    type="number"
+                    value={charge.max || ''}
+                    onChange={(e) => updateCharge(chargeIndex, 'max', Math.min(parseInt(e.target.value) || 0, 100))}
+                    placeholder="Max"
+                    min="0"
+                    max="100"
+                  />
+                </td>
+                <td className="col-dc">
+                  <div className="charge-boxes">
+                    {Array.from({ length: Math.min(parseInt(charge.max) || 0, 100) }).map((_, boxIndex) => (
+                      <input
+                        key={boxIndex}
+                        type="checkbox"
+                        checked={boxIndex < charge.current}
+                        onChange={() => toggleBox(chargeIndex, boxIndex)}
+                      />
+                    ))}
+                  </div>
+                </td>
+                <td className="col-notes">
+                  <input
+                    type="text"
+                    value={charge.notes || ''}
+                    onChange={(e) => updateCharge(chargeIndex, 'notes', e.target.value)}
+                    placeholder="Notes (e.g., Regain all on Long Rest)"
+                  />
+                </td>
+                <td className="col-controls">
+                  <div className="action-buttons">
+                    <button
+                      className="move-btn"
+                      onClick={() => moveCharge(chargeIndex, 'up')}
+                      disabled={chargeIndex === 0}
+                      title="Move up"
+                    >
+                      ↑
+                    </button>
+                    <button
+                      className="move-btn"
+                      onClick={() => moveCharge(chargeIndex, 'down')}
+                      disabled={chargeIndex === charges.length - 1}
+                      title="Move down"
+                    >
+                      ↓
+                    </button>
+                    <button
+                      className="delete-btn"
+                      onClick={() => deleteCharge(chargeIndex)}
+                      title="Delete charge"
+                    >
+                      ×
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
         <button className="add-btn" onClick={addCharge}>
           + Add Resource
         </button>
