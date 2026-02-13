@@ -54,11 +54,26 @@ input:focus, textarea:focus, select:focus {
 }
 
 input[type="checkbox"] {
-  width: 1.2rem;
-  height: 1.2rem;
+  appearance: none;
+  -webkit-appearance: none;
+  width: 18px;
+  height: 18px;
+  border: 2px solid var(--border);
+  border-radius: 50%;
   cursor: pointer;
-  accent-color: var(--accent);
-  filter: brightness(0.8);
+  position: relative;
+  background: var(--bg-primary);
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+}
+
+input[type="checkbox"]:hover {
+  border-color: var(--accent);
+}
+
+input[type="checkbox"]:checked {
+  background: var(--text-light);
+  border-color: var(--text-light);
 }
 
 button {

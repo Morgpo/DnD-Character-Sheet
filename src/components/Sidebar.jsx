@@ -14,7 +14,7 @@ export default function Sidebar({
         <button className="close-button" onClick={onClose}>
           Close &times;
         </button>
-        
+
         <a 
           href="#"
           className={`sidebar-item ${currentPage === 'attributes' ? 'active' : ''}`}
@@ -25,10 +25,10 @@ export default function Sidebar({
         
         <a 
           href="#"
-          className={`sidebar-item ${currentPage === 'backstory' ? 'active' : ''}`}
-          onClick={(e) => { e.preventDefault(); onPageChange('backstory'); }}
+          className={`sidebar-item ${currentPage === 'overview' ? 'active' : ''}`}
+          onClick={(e) => { e.preventDefault(); onPageChange('overview'); }}
         >
-          Backstory
+          Actions
         </a>
         
         <a 
@@ -36,7 +36,7 @@ export default function Sidebar({
           className={`sidebar-item ${currentPage === 'equipment' ? 'active' : ''}`}
           onClick={(e) => { e.preventDefault(); onPageChange('equipment'); }}
         >
-          Inv. & NPCs
+          Inventory
         </a>
         
         <a 

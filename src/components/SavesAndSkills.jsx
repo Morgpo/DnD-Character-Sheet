@@ -105,14 +105,25 @@ export default function SavesAndSkills({
     }
   }, [spellCasting, mods, prof])
 
+  // Group skills by attribute
+  const skillsByAttr = {
+    str: ['athletics'],
+    dex: ['acrobatics', 'sleightOfHand', 'stealth'],
+    con: [],
+    int: ['arcana', 'history', 'investigation', 'nature', 'religion'],
+    wis: ['animalHandling', 'insight', 'medicine', 'perception', 'survival'],
+    cha: ['deception', 'intimidation', 'performance', 'persuasion']
+  }
+
   return (
     <section className="card">
       <h3 className="section-title">Saving Throws & Skills</h3>
       <div className="saves-skills-container">
-        <div className="saves-section">
-          <h4>Saving Throws</h4>
-          {['str', 'dex', 'con', 'int', 'wis', 'cha'].map(attr => (
-            <div key={attr} className="save-item">
+        {['str', 'dex', 'con', 'int', 'wis', 'cha'].map(attr => (
+          <div key={attr} className="stat-column">
+            <div className="stat-header">{attr.toUpperCase()}</div>
+            
+            <div className="save-item">
               <input
                 type="checkbox"
                 checked={saves[attr]}
@@ -124,76 +135,48 @@ export default function SavesAndSkills({
                 value={calculateSave(attr)}
                 readOnly
               />
-              <label>{attr.toUpperCase()}</label>
+              <label>Save</label>
             </div>
-          ))}
-        </div>
 
-        <div className="skills-section">
-          <h4>Skills</h4>
-          {Object.keys(SKILL_MAPPING).map(skillName => (
-            <div key={skillName} className="skill-item">
-              <input
-                type="checkbox"
-                checked={skills[skillName].prof}
-                onChange={(e) => onChange(`skills.${skillName}.prof`, e.target.checked)}
-              />
-              <input
-                type="checkbox"
-                checked={skills[skillName].expert}
-                onChange={(e) => onChange(`skills.${skillName}.expert`, e.target.checked)}
-                title="Expertise"
-              />
-              <input
-                type="text"
-                className="auto-filled"
-                value={calculateSkill(skillName)}
-                readOnly
-              />
-              <label>{SKILL_LABELS[skillName]}</label>
-              <span className="skill-attr">({SKILL_MAPPING[skillName].toUpperCase()})</span>
-            </div>
-          ))}
-        </div>
+            <div className="skills-divider"></div>
 
-        <div className="spellcasting-section">
-          <h4>Spellcasting</h4>
-          <div className="spell-select">
-            <label>Ability</label>
-            <select
-              value={spellCasting}
-              onChange={(e) => onChange('spellCasting', e.target.value)}
-            >
-              <option value="none">No Spellcasting</option>
-              <option value="str">Strength</option>
-              <option value="dex">Dexterity</option>
-              <option value="con">Constitution</option>
-              <option value="int">Intelligence</option>
-              <option value="wis">Wisdom</option>
-              <option value="cha">Charisma</option>
-            </select>
+            {skillsByAttr[attr].map(skillName => {
+              const skill = skills[skillName]
+              const profState = skill.expert ? 'expert' : (skill.prof ? 'prof' : 'none')
+              
+              const handleSkillClick = () => {
+                if (skill.expert) {
+                  // expert -> none
+                  onChange(`skills.${skillName}.expert`, false)
+                  onChange(`skills.${skillName}.prof`, false)
+                } else if (skill.prof) {
+                  // prof -> expert
+                  onChange(`skills.${skillName}.expert`, true)
+                } else {
+                  // none -> prof
+                  onChange(`skills.${skillName}.prof`, true)
+                }
+              }
+              
+              return (
+                <div key={skillName} className="skill-item">
+                  <div 
+                    className={`skill-checkbox ${profState}`}
+                    onClick={handleSkillClick}
+                    title={profState === 'expert' ? 'Expertise' : profState === 'prof' ? 'Proficient' : 'Not Proficient'}
+                  />
+                  <input
+                    type="text"
+                    className="auto-filled"
+                    value={calculateSkill(skillName)}
+                    readOnly
+                  />
+                  <label>{SKILL_LABELS[skillName]}</label>
+                </div>
+              )
+            })}
           </div>
-          <div className="spell-stats">
-            <div className="spell-stat">
-              <label>Spell DC</label>
-              <input
-                type="text"
-                className="auto-filled"
-                value={calculateSpellDC()}
-                readOnly
-              />
-            </div>
-            <div className="spell-stat">
-              <label>Spell Attack</label>
-              <input
-                type="text"
-                className="auto-filled"
-                value={calculateSpellBonus()}
-                readOnly
-              />
-            </div>
-          </div>
-        </div>
+        ))}
       </div>
     </section>
   )

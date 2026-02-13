@@ -73,6 +73,15 @@ export default function Proficiencies({ data, onChange }) {
           </div>
         </div>
         <div className="prof-item">
+          <label>Weapon Masteries</label>
+          <textarea
+            value={data.weaponMasteries || ''}
+            onChange={(e) => onChange('proficiencies.weaponMasteries', e.target.value)}
+            rows="3"
+            placeholder="Nick, Vex, Cleave, etc."
+          />
+        </div>
+        <div className="prof-item">
           <label>Tools</label>
           <textarea
             value={data.tools}

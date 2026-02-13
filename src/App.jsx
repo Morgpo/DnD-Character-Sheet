@@ -56,7 +56,8 @@ const getDefaultState = () => {
       exp: '',
       alignment: '',
       deity: '',
-      currentLevel: ''
+      currentLevel: '',
+      size: ''
     },
     topBar: {
       proficiency: '',
@@ -117,9 +118,15 @@ const getDefaultState = () => {
         simple: false,
         martial: false
       },
+      weaponMasteries: '',
       tools: ''
     },
-    features: '',
+    features: {
+      feats: '',
+      racialTraits: '',
+      classFeatures: '',
+      backgroundFeatures: ''
+    },
     charges: [],
     attacks: [],
     actions: [],
@@ -272,7 +279,9 @@ function App() {
       <ConfirmModal
         isOpen={showClearConfirm}
         title="⚠️ Clear Character Sheet"
-        message="WARNING: This will clear ALL data and reset the character sheet to blank.\n\nThis action cannot be undone!\n\nDo you want to continue?"
+        message="WARNING: This will clear ALL data and reset the character sheet to blank. 
+                              
+                              Do you want to continue?"
         onConfirm={handleClearConfirm}
         onCancel={handleClearCancel}
       />
@@ -307,6 +316,9 @@ function App() {
       <div className="main-content" onClick={() => setSidebarOpen(false)}>
         <CharacterBasicInfo
           data={character.basicInfo}
+          topBar={character.topBar}
+          status={character.status}
+          attributes={character.attributes}
           onChange={updateCharacter}
         />
 
@@ -314,12 +326,6 @@ function App() {
           <div className="page">
             <Attributes
               attributes={character.attributes}
-              topBar={character.topBar}
-              basicInfo={character.basicInfo}
-              onChange={updateCharacter}
-            />
-            <Status
-              data={character.status}
               onChange={updateCharacter}
             />
             <SavesAndSkills
@@ -342,24 +348,6 @@ function App() {
                   onChange={updateCharacter}
                 />
             </div>
-             <Charges
-                charges={character.charges}
-                onChange={updateCharacter}
-              />
-            <Attacks
-              attacks={character.attacks}
-              attributes={character.attributes}
-              proficiency={character.topBar.proficiency}
-              spellCasting={character.spellCasting}
-              onChange={updateCharacter}
-            />
-            <Actions
-              actions={character.actions}
-              attributes={character.attributes}
-              proficiency={character.topBar.proficiency}
-              spellCasting={character.spellCasting}
-              onChange={updateCharacter}
-            />
           </div>
         )}
 
@@ -378,17 +366,36 @@ function App() {
               spells={character.spells}
               attributes={character.attributes}
               proficiency={character.topBar.proficiency}
+              spellCasting={character.spellCasting}
               onChange={updateCharacter}
             />
           </div>
         )}
 
-        {currentPage === 'backstory' && (
+        {currentPage === 'overview' && (
           <div className="page">
-            <Backstory
-              data={character.backstory}
+            <Status
+              data={character.status}
               onChange={updateCharacter}
             />
+            <Attacks
+              attacks={character.attacks}
+              attributes={character.attributes}
+              proficiency={character.topBar.proficiency}
+              spellCasting={character.spellCasting}
+              onChange={updateCharacter}
+            />
+            <Actions
+              actions={character.actions}
+              attributes={character.attributes}
+              proficiency={character.topBar.proficiency}
+              spellCasting={character.spellCasting}
+              onChange={updateCharacter}
+            />
+            <Charges
+                charges={character.charges}
+                onChange={updateCharacter}
+              />
           </div>
         )}
 
@@ -396,6 +403,10 @@ function App() {
           <div className="page">
             <Notes
               data={character.notes}
+              onChange={updateCharacter}
+            />
+            <Backstory
+              data={character.backstory}
               onChange={updateCharacter}
             />
           </div>
