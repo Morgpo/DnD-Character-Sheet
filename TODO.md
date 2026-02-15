@@ -2,14 +2,13 @@
 
 ## Easy/High Priority
 
-- [x] Fix the botched pull request
-
 - [ ] Add in Drag and Drop for Attacks, spells, etc
 
-- [ ] Be able to Hide Spell levels and cantrips through a popup on the Spell Sheet
-        - Apply this to other places too
+- [ ] Make up and down arrow keys increase/decrease the number in textboxes where it will always be a number. This is only working in Item Charges
 
-- [ ] more info per spell (casting time, actions)
+- [ ] more info per spell on the spell sheet (casting time, actions)
+
+- [ ] Make a .ico
 
 
 
@@ -36,64 +35,3 @@
 
 - [ ] Import Spell Lists from Spellcasting Class
         - For example, Paladins, Clerics, etc have all spells known, but can only have a few prepared. Import all of them based on their Class (not all classes work obviously) and let the user just check them as prepared
-
-
-
----
-
-## Done
-
-- [x] Refactor UI theme to be more visually appealing ✅
-        - Dark medieval fantasy style
-        - Unique but readable fonts
-        - Better color scheme for readability
-
-- [x] Fix Death Saves UI ✅
-        - Previously overlapping Hit Dice - now fixed with proper grid layout
-
-- [x] Add Current Level Input ✅
-        - Automatically calculate proficiency bonus based on level
-        - New numeric input field (1-20) in character header
-
-- [x] Rename "Top Bar" to something more thematically appropriate ✅
-        - Renamed to "Core Statistics"
-
-- [x] Clear Sheet functionality ✅
-        - Now properly clears all data and resets to blank state
-
-- [x] Document explaining what all should be implemented and what is not yet ✅
-        - See FEATURES.md for comprehensive implementation status
-
-- [x] Change the Locked elements color to something more thematic - maybe a gold outline and like greyed out. The blue is a bit too off theme.
-
-- [x] Maybe make the checkboxes darker, or make the rest of the theme slightly lighter to make the checkboxes pop less
-
-- [x] Remove placeholder text from all inputs that are centered (mostly numbers, the placeholder text overlaps with the text cursor and looks weird)
-
-- [x] Make "Actions" tab
-    - This is basically a copy of the attacks section, but for spells or abilities that don't do damage but involve other stats (hold person, command, etc.)
-
-- [x] Add arrows to move entries in the Items, Resources, and the new Actions sections up and down to reorder them
-
-- [x] Make the loced text not italics, that font is hard to read like that
-
-- [x] Change Damage placeholder text to something else, "1d8+3" makes me think I put that value in
-
-- [x] Remove the default up arrows in the number text boxes. Have them match text text boxes and just have nothing
-    - Weight, Current Level, Spell Slots counter
-
-    - [x] Format Actions and Spells
-    - Copy the spacing and formatting from the attacks section.
-        - This was modified to be more general and less confusing, last time just the subtext was removed and no other changes
-
-- [x] Refactor the Spell slots counter, but it right underneath the Level, and have the checkboxes appear one by one extending left, with some extra padding between the counter and the checkboxes. Also have the checkboxes on the same verticality as the counter, which is right under the level, so it looks more cohesive and less like the checkboxes are just floating in the middle of the page
-
-- [x] Add a textbox for notes on the attack entries. Make the Hit/DC column a little smaller and put the notes on the far right. Also change the "Type" text to "Note" and just align that over the textbox
-
-- [x] Spells (and cantrips of course)
-    - Add padding between the Spell slot counter and the first spell
-    - Add up/down arrows to spells to reorder them
-    - For some reason the Spell slot text input deselects when you start typing, must fix that
-    - Have two text inputs, one for the text name, another for the wiki link. Optional: have a button that you can click to go to the link, which only appears if there is a link. Also, make the link and button right aligned with the button on the far left of that align but keep the Spell name input big and left aligned, so it looks more cohesive and less like the link input is just floating in the middle of the page or just a whole page for one input that's three words long
-
-- [x] Match the size of the inputs in the Actions section to the ones in the Attacks section. Then make the Description/Notes input in the abilities section fill out the rest of the row

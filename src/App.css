@@ -397,7 +397,7 @@
 
 .class-background-right textarea {
   flex: 1;
-  min-height: 200px;
+  min-height: 150px;
   padding: 0.75rem;
   border: 2px solid var(--border);
   border-radius: 6px;
@@ -572,6 +572,46 @@
 .conditions textarea, .boons textarea {
   width: 100%;
   resize: vertical;
+}
+
+.spell-slot-container {
+  grid-column: 1 / -1;
+}
+
+.spell-slot-container label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: bold;
+}
+
+.spell-slot-summary {
+  padding: 1rem;
+  background: var(--bg-primary);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.slot-level-row {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.slot-level-label {
+  min-width: 80px;
+  font-weight: 600;
+  color: var(--text-light);
+}
+
+.spell-slot-empty {
+  margin: 0;
+  color: var(--text-light);
+  opacity: 0.8;
+  font-size: 0.95rem;
 }
 
 /* Saves and Skills */

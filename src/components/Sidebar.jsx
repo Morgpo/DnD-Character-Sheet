@@ -30,6 +30,14 @@ export default function Sidebar({
         >
           Actions
         </a>
+
+        <a 
+          href="#"
+          className={`sidebar-item ${currentPage === 'spells' ? 'active' : ''}`}
+          onClick={(e) => { e.preventDefault(); onPageChange('spells'); }}
+        >
+          Spell Sheet
+        </a>
         
         <a 
           href="#"
@@ -37,14 +45,6 @@ export default function Sidebar({
           onClick={(e) => { e.preventDefault(); onPageChange('equipment'); }}
         >
           Inventory
-        </a>
-        
-        <a 
-          href="#"
-          className={`sidebar-item ${currentPage === 'spells' ? 'active' : ''}`}
-          onClick={(e) => { e.preventDefault(); onPageChange('spells'); }}
-        >
-          Spell Sheet
         </a>
         
         <a 

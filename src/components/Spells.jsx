@@ -207,7 +207,7 @@ export default function Spells({ spells, attributes, proficiency, spellCasting, 
       return
     }
 
-    const numSlots = Math.max(0, Math.min(82, parseInt(count, 10) || 0))
+    const numSlots = Math.max(0, Math.min(41, parseInt(count, 10) || 0))
     const newSlots = Array(numSlots).fill(false)
     onChange(`spells.slotCounts.${level}`, String(numSlots))
     onChange(`spells.slots.${level}`, newSlots)
