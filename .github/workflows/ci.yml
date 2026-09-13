@@ -1,0 +1,50 @@
+name: CI
+
+on:
+  pull_request:
+    branches: [main]
+
+# Superseded runs are cancelled rather than left to finish, so pushing twice to a PR
+# doesn't leave the first run occupying a runner for a result nobody will read.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+# This is one job on purpose: a static Vite/React app with no backend, database, or
+# deploy step doesn't need cadence-style split jobs for build/schema/e2e signals.
+#
+# NOT YET A REQUIRED CHECK. This workflow reports on every PR, but nothing in this
+# repo's branch settings requires it to pass before merging -- see docs/workflow.md
+# and .github/rulesets/protect-main.json (committed, not applied). Run
+# scripts/ci/apply-ruleset.sh by hand once you want a red run to actually block a
+# merge. If you do turn it on, the job name below ("Verify") must keep matching the
+# name in that ruleset's required_status_checks, or the required check gates nothing.
+
+jobs:
+  verify:
+    name: Verify
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          # check-conventions.sh diffs commit subjects against origin/main.
+          fetch-depth: 0
+
+      - name: Branch and commit conventions
+        run: bash scripts/ci/check-conventions.sh
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install
+        run: npm ci
+
+      - name: Build
+        run: npm run build
+
+      - name: Test
+        run: npm test

@@ -1,0 +1,8 @@
+blank_issues_enabled: true
+contact_links:
+  - name: Something else
+    url: https://github.com/Morgpo/DnD-Character-Sheet/issues/new
+    about: >
+      A blank issue is fine for anything the forms don't fit. Add the
+      `needs investigation` label if the scope isn't clear yet, or `needs decision`
+      if you know what's wrong but not which fix you want.

@@ -11,20 +11,21 @@
 8. [File Organization](#file-organization)
 9. [Adding Features](#adding-features)
 10. [Styling System](#styling-system)
+11. [Known Quirks & Dead Code](#known-quirks--dead-code)
 
 ---
 
 ## Project Overview
 
-**Project Name:** D&D 5th Edition Character Sheet  
-**Version:** 2.0 (React version)  
+**Project Name:** D&D 5th Edition Character Sheet
+**Version:** 2.0 (React version)
 **Purpose:** A web-based character sheet for Dungeons & Dragons 5th Edition that allows players to create, manage, and save character data locally in their browser.
 
 ### Key Features
 - **Auto-Save:** Character data automatically saves to browser local storage every 1 second after user input
 - **Import/Export:** Save character data as JSON files and load them back
-- **Dynamic Calculations:** Auto-calculates modifiers, proficiency bonuses, spell DC, armor class bonuses, etc.
-- **Page-Based Navigation:** Multiple sections organized as logical "pages" (Attributes, Equipment, Spells, Backstory, Notes)
+- **Dynamic Calculations:** Auto-calculates modifiers, proficiency bonus, passive perception, spell DC, and attack/save bonuses
+- **Page-Based Navigation:** Multiple sections organized as logical "pages" (see [Architecture](#architecture) for the actual page map)
 - **Dynamic Lists:** Add/remove/reorder attacks, spells, equipment, charges, and actions
 - **D&D 5e Compliance:** Follows official D&D 5e mechanics for skill checks, attribute modifiers, spell slots, etc.
 
@@ -41,16 +42,21 @@
 ```
 
 ### Build & Development Tools
-- **Build Tool:** Vite 6.0.3 - Fast, modern module bundler for React
-- **React Plugin:** @vitejs/plugin-react 4.3.4 - Enables JSX and Fast Refresh
-- **Type Support:** @types/react and @types/react-dom for TypeScript support (optional)
+- **Build Tool:** Vite 6 - Fast, modern module bundler for React
+- **React Plugin:** @vitejs/plugin-react - Enables JSX and Fast Refresh
+- **Type Support:** @types/react and @types/react-dom (types only; the project itself is plain JS/JSX, not TypeScript)
+- **Testing:** Vitest + React Testing Library, configured via a `test` block in `vite.config.js` rather than a separate config file. Coverage is a handful of smoke tests, not exhaustive.
+
+There is no linter configured.
 
 ### How to Run
 ```bash
 npm install          # Install dependencies
-npm run dev         # Start dev server (usually http://localhost:5173)
+npm run dev         # Start dev server (http://localhost:3000, per vite.config.js)
 npm run build       # Build for production
 npm run preview     # Preview built app
+npm test            # Run the test suite once
+npm run test:watch  # Run it in watch mode
 ```
 
 ---
@@ -69,28 +75,30 @@ App.jsx (Main Container)
     │   └── Page selection & Options (Clear, Save, Load)
     │
     ├── Main Content Area
-    │   └── CharacterBasicInfo (Always visible)
-    │   └── Page-Based Components
-    │       ├── Page: Attributes
-    │       │   ├── Attributes
-    │       │   ├── Status
+    │   └── CharacterBasicInfo (Always visible, regardless of currentPage)
+    │   └── Page-Based Components (currentPage value → sidebar label)
+    │       ├── 'attributes' → "Attributes"
+    │       │   ├── Attributes (race/background/class + ability scores)
     │       │   ├── SavesAndSkills
     │       │   ├── Proficiencies
-    │       │   ├── FeaturesTraits
-    │       │   ├── Charges
+    │       │   └── FeaturesTraits
+    │       ├── 'overview' → "Actions"
+    │       │   ├── Status
     │       │   ├── Attacks
-    │       │   └── Actions
-    │       ├── Page: Equipment
+    │       │   ├── Actions
+    │       │   └── Charges
+    │       ├── 'equipment' → "Inventory"
     │       │   └── Equipment
-    │       ├── Page: Spells
+    │       ├── 'spells' → "Spell Sheet"
     │       │   └── Spells
-    │       ├── Page: Backstory
-    │       │   └── Backstory
-    │       └── Page: Notes
-    │           └── Notes
+    │       └── 'notes' → "Notes"
+    │           ├── Notes
+    │           └── Backstory
     │
-    └── Footer & Utility Buttons
+    └── Footer & Utility Buttons (scroll-to-top, mobile menu toggle)
 ```
+
+**Important:** the `currentPage` string values (`attributes`, `overview`, `equipment`, `spells`, `notes`) do not match their sidebar labels 1:1 — most notably `overview` is labeled "Actions" in the sidebar, and there is no page called `backstory` (Backstory is rendered together with Notes on the `notes` page). Always check [App.jsx](../src/App.jsx)'s page-switch block and [Sidebar.jsx](../src/components/Sidebar.jsx) directly before assuming a page name from this doc or from either file alone.
 
 ### Data Flow Pattern
 1. **User Input** → Input field in component
@@ -106,24 +114,36 @@ App.jsx (Main Container)
 
 ### Global State Structure (`character` object)
 
-The state is organized into logical sections matching the UI components:
+The state is organized into logical sections matching the UI components. This list follows `getDefaultState()` in App.jsx (the authoritative source — check it directly when a field name matters):
 
-- **basicInfo** - Character name, class, race, background, player name, alignment, deity, level, experience
-- **topBar** - Quick stats like proficiency bonus, initiative, passive perception, AC, speed, spell DC
-- **attributes** - The six core ability scores (STR, DEX, CON, INT, WIS, CHA) ranging 3-20
+- **basicInfo** - `charName`, `currentLevel`, `race`, `background`, `classes`, `size`, `exp`. Also defines `level`, `levelTwo`, `playerName`, `alignment`, `deity`, which exist in the default state but currently have **no UI anywhere** — see [Known Quirks](#known-quirks--dead-code).
+- **topBar** - Quick stats: `proficiency`, `initiative`, `passivePerception`, `ac`, `speed`, `spellDC`, `inspiration`. Despite the names, not all of these are auto-calculated — see below.
+- **attributes** - The six core ability scores (STR, DEX, CON, INT, WIS, CHA), free-text (no enforced 3-20 range in code)
 - **status** - Health tracking (current/temp/max HP), hit dice, death saves, conditions, boons
 - **saves** - Saving throw proficiency boolean for each ability (STR-CHA)
-- **skills** - 18 skills, each with proficiency and expertise flags
-- **spellCasting** - Which ability governs spell attacks/DC (ability name or 'none')
-- **proficiencies** - Armor, weapons, tools, and language proficiencies (text fields)
-- **features** - Special features and traits
-- **charges** - Dynamic list of resources like Ki Points or Rage (tracked with current/max)
-- **attacks** - Dynamic list of weapon/spell attacks with ability modifiers, attack types, damage
-- **actions** - Dynamic list of bonus actions and special abilities
-- **equipment** - Currency (CP, SP, EP, GP, PP), inventory items with weight, capacity, encumbrance
-- **spells** - Spell class, spell slots by level (as used/unused arrays), cantrips and leveled spells with prepared flags
-- **backstory** - Personality traits, ideals, bonds, flaws, physical description, backstory, allies/NPCs
-- **notes** - Two free-form text areas for player notes
+- **skills** - 18 skills, each with `prof` and `expert` boolean flags
+- **spellCasting** - Which ability governs spell attacks/DC (ability name or `'none'`)
+- **proficiencies** - `languages`, `armor` (light/medium/heavy/shields booleans), `weapons` (simple/martial booleans), `weaponMasteries`, `tools`
+- **features** - `feats`, `racialTraits`, `classFeatures`, `backgroundFeatures` (free text)
+- **charges** - Dynamic list of resources like Ki Points or Rage (id, name, max, current, notes)
+- **attacks** - Dynamic list of weapon/spell attacks (id, name, stat, attackType, damage, damageType, notes, addProf, plus optional manualHit/manualDC when stat is 'custom')
+- **actions** - Dynamic list of bonus actions/abilities (id, name, stat, saveDC-derived, description, plus optional manualDC when stat is 'custom')
+- **equipment** - Currency (cp/sp/ep/gp/pp), `items` array (id, name, weight), `capacity`, `encumbrance`
+- **spells** - `spellClass`, `slotCounts` (per level 1-9), `slots` (per level, boolean array of used/unused), `cantrips`, `level1`...`level9` (each spell: id, name, link, prepared)
+- **backstory** - `personality`, `ideals`, `bonds`, `flaws`, `backstory`, `appearance`, `allies`
+- **notes** - `notes1`, `notes2` (two free-form text areas)
+
+### Which "auto-calculated" fields are actually calculated
+
+A few fields look derived but aren't, and vice versa — this trips people up when extending the header/stat area:
+
+| Field | Where computed | Auto-calculated? |
+|---|---|---|
+| `topBar.proficiency` | [CharacterBasicInfo.jsx](../src/components/CharacterBasicInfo.jsx) from `basicInfo.currentLevel`, pushed via `useEffect` | Yes — read-only in the UI |
+| Passive Perception | [CharacterBasicInfo.jsx](../src/components/CharacterBasicInfo.jsx), computed inline from WIS mod + perception proficiency, not stored in state | Yes — read-only, derived on render |
+| `topBar.initiative` | N/A | **No** — plain editable input in CharacterBasicInfo.jsx, despite a DEX-modifier calculation sitting unused right above it in the same file |
+| `topBar.spellDC` | [SavesAndSkills.jsx](../src/components/SavesAndSkills.jsx), computed and written via `useMemo`/`onChange` | Written, but **never displayed anywhere** |
+| Spell DC / Spell Attack shown on the Spells page | [Spells.jsx](../src/components/Spells.jsx), calculated independently from `spellCasting`/`attributes`/`proficiency` props | Yes — its own calculation, does not read `topBar.spellDC` |
 
 ### State Update Pattern
 
@@ -133,7 +153,7 @@ App.jsx uses a generic **path-based update function** that accepts a dot-notatio
 - Components call `onChange('path.to.field', value)` with a dot-notation path
 - The function splits the path and navigates through the nested object structure
 - It creates new object references at each level to maintain immutability (required by React)
-- This works for simple fields like `'basicInfo.charName'` or array items like `'attacks.2.damage'`
+- This works for simple fields like `'basicInfo.charName'` or a specific array index like `'spells.slots.1'`
 
 **Key Points:**
 - All state updates are immutable (new object references created)
@@ -152,44 +172,41 @@ App.jsx uses a generic **path-based update function** that accepts a dot-notatio
 - **Sidebar.jsx** - Side navigation, page selection, options menu
 
 #### 2. **Display Components (Single Section)**
-These components receive a portion of the state and render a specific section:
-
-- **CharacterBasicInfo.jsx** - Character name, class, race, background, etc.
-- **Attributes.jsx** - Core attributes (STR, DEX, CON, INT, WIS, CHA) with auto-calculated modifiers
-- **Status.jsx** - HP, hit dice, death saves, conditions, boons
-- **Proficiencies.jsx** - Armor, weapons, tools, languages
-- **FeaturesTraits.jsx** - Special features and traits (text area)
+- **CharacterBasicInfo.jsx** - Character name and the header stat row (level, XP, inspiration, AC, HP, speed, size, proficiency, initiative, passive perception)
+- **Attributes.jsx** - Race/Background/Class info, plus the six ability scores with auto-calculated modifiers
+- **Status.jsx** - HP, hit dice, death saves, conditions
+- **Proficiencies.jsx** - Armor, weapons, weapon masteries, tools, languages
+- **FeaturesTraits.jsx** - Feats, racial traits, class features, background features
 - **Notes.jsx** - Two text areas for miscellaneous notes
+- **Backstory.jsx** - Personality traits/ideals/bonds/flaws, backstory, appearance, allies
 
 #### 3. **Dynamic List Components**
-These components manage arrays of items with add/remove/reorder functionality:
-
 - **Charges.jsx** - Resources and charges (Ki Points, Rage, etc.) with visual checkboxes
-- **Attacks.jsx** - Attack/spell actions with calculated to-hit and damage
-- **Actions.jsx** - Bonus actions and special actions
-- **Equipment.jsx** - Currency and inventory items with weight calculation
+- **Attacks.jsx** - Attack/spell actions with calculated to-hit and save DC
+- **Actions.jsx** - Bonus actions and special actions with calculated save DC
+- **Equipment.jsx** - Currency and inventory items with a computed running weight total
 - **Spells.jsx** - Spell slots and prepared spells by level
 
 #### 4. **Calculation Helper Components**
 - **SavesAndSkills.jsx** - Saving throws and skill checks with auto-calculations
 
 #### 5. **Modal/Dialog Components**
-- **ConfirmModal.jsx** - Confirmation dialog for destructive actions
+- **ConfirmModal.jsx** - Confirmation dialog for destructive actions (used for Clear Sheet)
 
 ### Component Prop Pattern
 
 **Display/Field Components** (single data section):
-- Receive a `data` prop with their section of the state
+- Receive a `data` prop (or similarly-named slice) with their section of the state
 - Receive an `onChange` callback function
 - Call `onChange('path.to.field', value)` when users edit inputs
 - No local state management - entirely controlled by parent
 
 **List Components** (array data):
-- Receive an `items` array from state
+- Receive an array (e.g. `attacks`, `charges`, or `data.items`) from state
 - Often receive additional context like `attributes` or `proficiency` for calculations
 - Have internal functions to add, update, delete, and reorder items
-- Call `onChange('items', newArray)` to replace the entire array when items change
-- Each item has a unique `id` (usually timestamp) for React keys
+- Call `onChange('arrayPath', newArray)` to replace the entire array when items change
+- Each item has a unique `id` (`Date.now()` at creation time) for React keys
 - Support move-up/move-down operations for reordering
 
 This pattern keeps the component tree simple and makes state flow predictable - all data flows down as props, all changes flow up through the onChange callback.
@@ -198,7 +215,7 @@ This pattern keeps the component tree simple and makes state flow predictable - 
 
 ## Component Breakdown
 
-### 1. App.jsx (406 lines)
+### 1. App.jsx
 **Responsibility:** Main application container
 
 **Key Functions:**
@@ -208,11 +225,11 @@ This pattern keeps the component tree simple and makes state flow predictable - 
 - `updateCharacter()` - Generic path-based state updater
 - `saveBackup()` - Downloads character as JSON file
 - `loadBackup()` - Loads character from JSON file (with file picker)
-- `clearSheet()` - Resets character to blank state with confirmation
+- `clearSheet()` / `handleClearConfirm()` / `handleClearCancel()` - Resets character to blank state, gated by `ConfirmModal`
 
 **State Variables:**
 - `character` - The entire character data object
-- `currentPage` - Current page being displayed ('attributes', 'equipment', 'spells', 'backstory', 'notes')
+- `currentPage` - Current page being displayed (`'attributes' | 'overview' | 'equipment' | 'spells' | 'notes'`)
 - `sidebarOpen` - Boolean for mobile sidebar visibility
 - `showClearConfirm` - Boolean for clear confirmation modal
 
@@ -220,7 +237,7 @@ This pattern keeps the component tree simple and makes state flow predictable - 
 - `useEffect` hook debounces saves for 1000ms after character changes
 - Catches errors and logs feedback to console
 
-### 2. Sidebar.jsx (63 lines)
+### 2. Sidebar.jsx
 **Responsibility:** Navigation and options menu
 
 **Props:**
@@ -234,148 +251,117 @@ This pattern keeps the component tree simple and makes state flow predictable - 
 - Mobile-friendly slide-out sidebar with overlay
 - Active page highlighting
 - Options section with Clear, Save, Load buttons
-- Info section with help text
+- Info & Help section explaining autosave/backup behavior
 
-### 3. CharacterBasicInfo.jsx (67 lines)
-**Responsibility:** Character name, class, race, level, player info
+### 3. CharacterBasicInfo.jsx
+**Responsibility:** Character name and the always-visible header stat row
 
-**Data Fields:**
-- Character name, current level, class, multiclass
-- Race, background, player name
-- Experience, alignment, deity
+**Data Fields:** Character name; Level, Experience, Inspiration; AC, Hit Points (Temp/Current/Max), Speed, Size; Proficiency (read-only), Initiative (editable, see [Known Quirks](#known-quirks--dead-code)), Passive Perception (read-only)
 
-**Pattern:** Simple text inputs with labels, no calculations
+**Pattern:** Small local `StatBox`/`HPBox` helper components render each stat; simple inputs plus two computed read-only fields, no local state
 
-### 4. Attributes.jsx (88 lines)
-**Responsibility:** Core attributes and derived statistics
+### 4. Attributes.jsx
+**Responsibility:** Race/Background/Class info and the six core attributes
 
-**Key Calculations:**
-- `calculateMod()` - Converts attribute score (3-20) to modifier using D&D formula: `(score - 10) / 2`
-- **Proficiency Bonus** - Auto-calculated: `ceil(level / 4) + 1`
-- **Initiative** - Dexterity modifier
-- **Passive Perception** - 10 + Wisdom modifier
+**Sections:**
+- "Class & Background" card: Race/Species, Background (text inputs), Class Info (free-text textarea, not a structured multiclass list)
+- "Attributes" card: STR/DEX/CON/INT/WIS/CHA inputs with an auto-calculated modifier shown under each
 
-**Auto-Filled Fields:**
-- Proficiency, Initiative, Passive Perception (read-only, calculated)
+**Key Calculation:**
+- `calculateMod()` - Converts attribute score to modifier using D&D formula: `floor((score - 10) / 2)`
 
-**Manual Fields:**
-- Attribute scores (STR, DEX, CON, INT, WIS, CHA)
-- AC, Speed, Inspiration
+**Pattern:** Uses `useMemo` for the six modifiers. Does not compute or display proficiency, initiative, AC, or passive perception — those live in CharacterBasicInfo.jsx.
 
-**Pattern:** Uses `useMemo` for calculations, `useEffect` to auto-update proficiency when level changes
-
-### 5. Status.jsx (109 lines)
-**Responsibility:** Health, hit dice, death saves, conditions
+### 5. Status.jsx
+**Responsibility:** Hit dice, death saves, conditions, boons (HP itself lives in CharacterBasicInfo.jsx, not here)
 
 **Key Features:**
-- HP fields (Temporary, Current, Max)
 - Hit Dice tracker (Current/Max)
 - Death Save checkboxes (3 success, 3 failure)
 - Conditions and Boons text areas
 
 **Logic:**
-- `toggleDeathSave()` - Toggles death save checkboxes (clicking 4 times resets)
+- `toggleDeathSave()` - Clicking a checkbox fills up to that box; clicking the last filled one clears the row
 
-### 6. SavesAndSkills.jsx (201 lines)
-**Responsibility:** Saving throws and skill checks with calculations
+### 6. SavesAndSkills.jsx
+**Responsibility:** Saving throws and skill checks with auto-calculations
 
 **Key Features:**
-- 6 Saving Throws (one per attribute) with proficiency checkboxes
-- 18 Skills with proficiency levels (None, Proficient, Expert)
-- Spell DC and Spell Attack Bonus calculations (if spellcasting enabled)
+- 6 Saving Throws (one per attribute) with proficiency checkboxes and calculated bonus
+- 18 Skills grouped under their governing attribute, each cycling None → Proficient → Expert on click, with calculated bonus
+- Also computes Spell DC and writes it to `topBar.spellDC` — but does not render a Spell DC/Spell Attack field itself (see [Known Quirks](#known-quirks--dead-code))
 
 **Calculations:**
-- **Save DC** = 8 + Attribute Mod + Proficiency Bonus
-- **Skill Modifier** = Attribute Mod + (Proficiency × 1 or 2 for expertise)
-- **Spell Casting** - Determines which attribute is used for spell calculations
+- **Save bonus** = Attribute Mod + (Proficiency Bonus, if proficient)
+- **Skill bonus** = Attribute Mod + (Proficiency × 1 for proficient, × 2 for expertise)
 
 **Data Structure:**
 ```javascript
 skills: {
-  athleticcs: { prof: false, expert: false },  // One for each skill
+  athletics: { prof: false, expert: false },  // one entry per skill, 18 total
 }
 ```
 
-**Pattern:** Maps over skill names, calculates modifiers with useMemo
-
-### 7. Proficiencies.jsx (variable lines)
-**Responsibility:** Armor, weapons, tools, languages
+### 7. Proficiencies.jsx
+**Responsibility:** Armor, weapons, weapon masteries, tools, languages
 
 **Fields:**
-- Languages (text area)
-- Armor Proficiencies (text area)
-- Weapon Proficiencies (text area)
-- Tool Proficiencies (text area)
+- Armor: Light/Medium/Heavy/Shields checkboxes
+- Weapons: Simple/Martial checkboxes
+- Weapon Masteries (textarea)
+- Tools (textarea)
+- Languages (textarea)
 
-**Pattern:** Simple text areas, no complex logic
+### 8. FeaturesTraits.jsx
+**Responsibility:** Feats, racial traits, class features, background features
 
-### 8. FeaturesTraits.jsx (variable lines)
-**Responsibility:** Special features, feats, and class traits
+**Fields:** Four separate textareas, one per category (not a single combined text area)
 
-**Fields:**
-- Features/Traits (large text area)
-
-**Pattern:** Single text area component
-
-### 9. Charges.jsx (106 lines)
+### 9. Charges.jsx
 **Responsibility:** Track resources and charges (Ki Points, Rage, etc.)
 
-**What it does:** Manages a list of reusable resources with max capacity. Each resource has a name, maximum value, and current usage tracked via visual checkboxes (up to 20 boxes visible). Users can add unlimited resources, set their max capacity, toggle usage boxes, reorder, and delete.
+**What it does:** Manages a list of reusable resources with a max capacity (capped at 100). Each resource has a name, max value, a notes field, and current usage tracked via checkboxes rendered up to `max`. Users can add resources, set max capacity, toggle usage boxes, reorder (move up/down), and delete.
 
-**Key pattern:** For each resource, displays a row with the name and a number of checkboxes equal to the max value. Clicking checkboxes tracks current usage visually. This is a common pattern in D&D for tracking Ki Points, Rage uses, channel divinity charges, etc.
+**Data structure:** Array where each item has `id`, `name`, `max`, `current`, `notes`.
 
-**Data structure:** Array where each item has an id (for React keys), name string, max number, and current usage count.
-
-### 10. Attacks.jsx (180 lines)
+### 10. Attacks.jsx
 **Responsibility:** Track weapon/spell attacks with calculated to-hit bonuses and save DCs
 
-**What it does:** Manages a list of attacks including both weapon attacks and spell saves. For each attack, users input name, select which ability modifier to use (STR-CHA), choose attack type (attack roll vs. save DC), and specify damage. The component auto-calculates the to-hit bonus or save DC based on the ability, proficiency bonus, and level. Calculations are read-only and update whenever ability scores or proficiency change.
+**What it does:** Manages a list of attacks. For each, users input a name, pick an ability (STR-CHA or `custom`), choose Attack Roll vs. Save DC, toggle whether proficiency bonus applies (`addProf`), and fill in damage and a free-text notes field. The Hit/DC column is auto-calculated and read-only unless `stat` is `custom`, in which case it becomes an editable field backed by `manualHit`/`manualDC`.
 
-**How calculations work:** Attack Roll = Ability Modifier + Proficiency Bonus. Save DC = 8 + Ability Modifier + Proficiency Bonus. These are calculated from passed-in props (attributes, proficiency) so they're always in sync.
-
-**Key pattern:** Uses memoization to avoid recalculating modifiers on every render. Handles both attack and save mechanics in one flexible component.
+**How calculations work:** Attack Roll = Ability Modifier + (Proficiency Bonus if `addProf`). Save DC = 8 + spellcasting-ability Modifier + Proficiency Bonus (uses the character's `spellCasting` ability, not the row's own `stat`, for save DC).
 
 ### 11. Actions.jsx
-**Responsibility:** Track bonus actions, reactions, and special abilities
+**Responsibility:** Track bonus actions, reactions, and special abilities that key off a save DC rather than an attack roll
 
-**What it does:** Similar structure to Attacks but without calculations. Stores name, description, and notes for special action abilities. Useful for tracking class features like Cunning Action, Metamagic options, Sneak Attack, etc.
+**What it does:** Same shape as Attacks but simpler — name, stat (STR-CHA or `custom`), an auto-calculated Save DC (or manual when `stat` is `custom`), and a description field. No separate "attack roll" mode.
 
-**Key difference:** No auto-calculations - purely for documentation purposes.
-
-### 12. Equipment.jsx (165 lines)
+### 12. Equipment.jsx
 **Responsibility:** Currency and inventory management
 
-**What it does:** Two sections - currency tracker (CP, SP, EP, GP, PP) and inventory. For inventory, users add items with names and weights. The component auto-calculates total weight as a helper. Also includes fields for carrying capacity and encumbrance status (though these are manual, not auto-calculated).
+**What it does:** A currency section (CP/SP/EP/GP/PP) plus Carrying Capacity and Encumbrance (both manual text fields), and an inventory items table (name + weight). "Current Weight" is auto-calculated as the sum of item weights and displayed read-only — it is not stored in state, just derived on render.
 
-**Key pattern:** Demonstrates combining simple input fields (currency) with a list component (items). Auto-calculation of totals without storing the calculated value - it's computed on render from the item weights.
+### 13. Spells.jsx
+**Responsibility:** Spell management by level with prepared-spell tracking
 
-### 13. Spells.jsx (213 lines)
-**Responsibility:** Spell management by level with prepared spell tracking
+**What it does:** A "Spell Info" card (Spellcasting Ability select, calculated Spell DC/Spell Attack, Spellcasting Class text field) plus a spell list organized into levels (Cantrips through Level 9) via a shared internal `SpellLevel` component. For each level ≥ 1: a slot-count input that resizes a boolean `slots` array, and checkboxes for each slot. Each spell has a name, an optional wiki link (with a button to open it), and — for leveled spells only — a three-state "prepared" indicator (`none` → `prepared` → `always`, cycled by clicking). Cantrips have no slots and no prepared state.
 
-**What it does:** Largest component - organizes spells into levels (cantrips through level 9). For each level, displays:
-- Spell slots tracker (checkboxes to mark which slots are used)
-- List of known/available spells with prepared checkboxes (for prepared casting)
-- Optional wiki links for each spell
-- Move and delete buttons for organization
+**Key challenge:** Spell slots are boolean arrays sized by `slotCounts[level]`; `toggleSlot` fills/clears from the clicked box outward rather than toggling a single box, so slots are always used from the left.
 
-Different logic for cantrips (no slots, no prepared) vs. leveled spells (both applicable).
-
-**Key challenge:** Spell slots are represented as boolean arrays with length = number of slots. Updating slot count requires recreating the array to the new length.
-
-### 14. Backstory.jsx (81 lines)
+### 14. Backstory.jsx
 **Responsibility:** Character personality, ideals, bonds, flaws, backstory, appearance, allies/NPCs
 
-**What it does:** Seven text areas organized in a grid layout for character personality (traits, ideals, bonds, flaws), larger areas for backstory and physical appearance, and an area for important NPCs and organizations. Pure data entry - no calculations or complex logic.
+**What it does:** A "Personality" card (Traits/Ideals/Bonds/Flaws in a grid) and a "Backstory" card (Backstory, Appearance, and a full-width Allies & Organizations textarea). Pure data entry, rendered on the `notes` page alongside Notes.jsx.
 
 ### 15. Notes.jsx
 **Responsibility:** Two free-form note areas for player notes
 
-**What it does:** Very simple - two large text areas for miscellaneous notes. Users often use these for houserules, campaign setting notes, or session summaries.
+**What it does:** Two large textareas (`notes1`, `notes2`), rendered above Backstory on the `notes` page.
 
 ### 16. ConfirmModal.jsx
 **Responsibility:** Confirmation dialog for destructive actions
 
-**What it does:** Reusable modal component that accepts title, message, and confirm/cancel handlers. Used for the "Clear Sheet" operation to prevent accidental data loss.
+**What it does:** Reusable modal accepting `isOpen`, `title`, `message` (newline-split into `<br>`s), `onConfirm`, `onCancel`. Currently only wired up for Clear Sheet.
 
 ---
 
@@ -390,19 +376,17 @@ Different logic for cantrips (no slots, no prepared) vs. leveled spells (both ap
 A useEffect hook monitors the character state and sets a timeout. If the character changes again before the timeout fires, the previous timeout is cleared and a new one starts. This ensures saves only happen when the user pauses typing/editing.
 
 ### Load from Storage
-On app startup, the initialization function checks for a saved character in localStorage. If found, it loads that data and merges it with the current default state structure. This merge ensures that if new fields were added (from version updates), they get default values instead of causing undefined errors.
+On app startup, the initialization function checks for a saved character in localStorage. If found, it loads that data and merges it with the current default state structure via `mergeWithDefaults`. This merge ensures that if new fields were added (from version updates), they get default values instead of causing undefined errors.
 
 If the saved data is corrupted, the localStorage entry is cleared and the app starts fresh with a blank sheet.
 
 ### Backup System
-**Save Backup:**
-Users can download their character as a JSON file (filename includes character name for organization). This creates a permanent backup they can store safely outside the browser.
+**Save Backup:** Downloads the character as a JSON file (filename includes character name, falling back to `character-backup.json`).
 
-**Load Backup:**
-Users select a previously saved JSON file, which is parsed and merged with the current default state structure. This ensures compatibility even if the character data is from an older version of the app. The loaded data immediately overwrites the current character and saves to localStorage.
+**Load Backup:** User selects a JSON file, which is parsed and merged with the default state structure the same way as the localStorage load path. The loaded data immediately overwrites the current character and saves to localStorage.
 
 ### Merge with Defaults
-This is a recursive function that ensures all required fields exist before the app tries to use them. When loading old saved data or user backups, fields might be missing (especially from app updates that add new features). The merge function takes each field from the saved data but fills in missing fields from the defaults. This prevents undefined errors and makes backward compatibility automatic.
+`mergeWithDefaults(defaults, uploaded)` is a recursive function that ensures all required fields exist before the app tries to use them. When loading old saved data or user backups, fields might be missing (especially from app updates that add new features). It walks `defaults`, takes each field from `uploaded` when present, and otherwise falls back to the default value — recursing into plain objects, but taking arrays from `uploaded` as-is (an uploaded array is not merged item-by-item with the default array). This prevents undefined errors and makes backward compatibility mostly automatic — though it's worth knowing it won't repair an individual malformed item inside an array, only a missing array entirely.
 
 ---
 
@@ -412,68 +396,50 @@ This is a recursive function that ensures all required fields exist before the a
 ```
 DnD-Character-Sheet/
 ├── package.json              # Dependencies and scripts
-├── vite.config.js           # Vite build configuration
-├── index.html               # HTML entry point
-├── README.md                # Project info
-├── TODO.md                  # Development TODO list
+├── vite.config.js            # Vite build config, plus the Vitest `test` block
+├── index.html                # HTML entry point
+├── README.md                 # Project info
+├── .backups/                 # Sample/example character JSON backups (not app code)
+├── .github/
+│   ├── ISSUE_TEMPLATE/       # Bug / Enhancement / Half-built forms, config.yml
+│   ├── pull_request_template.md
+│   ├── rulesets/protect-main.json   # Branch-protection policy, committed but NOT applied
+│   └── workflows/ci.yml     # One-job CI: conventions, build, test
+├── .claude/skills/dnd-dev-cycle/    # The agent-facing half of the dev cycle
+├── scripts/ci/               # check-conventions.sh, apply-ruleset.sh
 ├── docs/
-│   └── BRANDING.md         # Brand guidelines
+│   ├── PROJECT_DOCUMENTATION.md   # This file
+│   ├── BRANDING.md                # Color palette & styling conventions
+│   └── workflow.md                # The dev cycle, human-facing half
 │
 └── src/
     ├── main.jsx            # React entry point (mounts App)
-    ├── index.css           # Global styles
-    ├── App.jsx             # Main app container (406 lines)
-    ├── App.css             # Main styles (941 lines)
+    ├── index.css           # Global styles, CSS variables
+    ├── App.jsx             # Main app container
+    ├── App.css             # Bulk of the app's styles
+    ├── App.test.jsx        # Page-routing + saved-data resilience smoke tests
+    ├── test/setup.js       # Vitest/RTL matcher setup
     │
-    └── components/         # React components
-        ├── Sidebar.jsx              # Navigation menu
-        ├── CharacterBasicInfo.jsx   # Name, class, race, etc.
-        ├── Attributes.jsx           # Core attributes and derived stats
-        ├── Status.jsx               # HP, hit dice, death saves
-        ├── SavesAndSkills.jsx       # Saving throws and skill checks
-        ├── Proficiencies.jsx        # Armor, weapons, tools
-        ├── FeaturesTraits.jsx       # Special features
-        ├── Charges.jsx              # Resources and charges
-        ├── Attacks.jsx              # Attack and spell actions
-        ├── Actions.jsx              # Bonus actions
-        ├── Equipment.jsx            # Currency and inventory
-        ├── Spells.jsx               # Spell management
-        ├── Backstory.jsx            # Character personality and history
-        ├── Notes.jsx                # Free-form notes
-        ├── ConfirmModal.jsx         # Confirmation dialog
-        ├── ConfirmModal.css         # Modal styles
-        └── [other].css              # Component-specific styles (if any)
+    └── components/
+        ├── Sidebar.jsx
+        ├── CharacterBasicInfo.jsx
+        ├── Attributes.jsx           (+ Attributes.test.jsx)
+        ├── Status.jsx
+        ├── SavesAndSkills.jsx
+        ├── Proficiencies.jsx
+        ├── FeaturesTraits.jsx
+        ├── Charges.jsx
+        ├── Attacks.jsx               (+ Attacks.test.jsx)
+        ├── Actions.jsx
+        ├── Equipment.jsx
+        ├── Spells.jsx
+        ├── Backstory.jsx
+        ├── Notes.jsx
+        ├── ConfirmModal.jsx
+        └── ConfirmModal.css    # The only component with its own CSS file
 ```
 
-### Component-to-File Mapping
-| Component | File | Size | Purpose |
-|-----------|------|------|---------|
-| App | App.jsx | 406 L | Main container, state, page routing |
-| Sidebar | Sidebar.jsx | 63 L | Navigation & options |
-| CharacterBasicInfo | CharacterBasicInfo.jsx | 67 L | Character info fields |
-| Attributes | Attributes.jsx | 88 L | Stats with calculations |
-| Status | Status.jsx | 109 L | HP and death saves |
-| SavesAndSkills | SavesAndSkills.jsx | 201 L | Saves and skills |
-| Proficiencies | Proficiencies.jsx | ? | Proficiency text areas |
-| FeaturesTraits | FeaturesTraits.jsx | ? | Features text area |
-| Charges | Charges.jsx | 106 L | Resource tracker |
-| Attacks | Attacks.jsx | 180 L | Attack list with math |
-| Actions | Actions.jsx | ? | Action list |
-| Equipment | Equipment.jsx | 165 L | Inventory management |
-| Spells | Spells.jsx | 213 L | Spell management |
-| Backstory | Backstory.jsx | 81 L | Personality traits |
-| Notes | Notes.jsx | ? | Free-form notes |
-| ConfirmModal | ConfirmModal.jsx | ? | Confirmation dialog |
-
-### CSS Organization
-- **App.css** - Main stylesheet (941 lines)
-  - Sidebar styles
-  - Button styles
-  - Layout and grid styles
-  - Component-specific styling
-- **ConfirmModal.css** - Modal styling
-- **index.css** - Global styles, CSS variables
-- Component-specific CSS may be in same file or separate
+(Line counts and a component-to-file size table are deliberately omitted here — they go stale the moment anyone edits a file. Use your editor/`wc -l` if you need current sizes.)
 
 ---
 
@@ -482,23 +448,20 @@ DnD-Character-Sheet/
 ### Patterns for Common Expansions
 
 #### Adding a Simple Field
-To add a new text/number field (like "Hometown" to character info):
 1. Add the field to the default state in `App.jsx` with an empty string or default value
-2. Find or create the appropriate component file (or create a new one)
+2. Find or create the appropriate component file
 3. Add an input element bound to that state field via the `onChange` callback
 4. Done - auto-save handles persistence automatically
 
 #### Adding a Calculated Field
-To add an auto-calculated value (like a derived stat):
 1. Create a calculation function inside the component
 2. Use `useMemo` to optimize the calculation (depends on the values it uses)
 3. Render as a read-only input with the `auto-filled` CSS class
-4. Pass the dependencies to useMemo so it recalculates when inputs change
+4. Pass the dependencies to `useMemo` so it recalculates when inputs change
 
-Key insight: Don't store calculated values in state - calculate them on each render from their dependencies. This prevents sync issues when dependencies change.
+Key insight: Don't store calculated values in state - calculate them on each render from their dependencies. This prevents sync issues when dependencies change. (`topBar.proficiency` and `topBar.spellDC` are exceptions that *do* get written to state so other components can read them via props — but note `topBar.spellDC` currently has no reader; see [Known Quirks](#known-quirks--dead-code).)
 
 #### Adding a Dynamic List
-To create a new list component (attacks, items, spells, charges, etc.):
 1. Add the array to the default state in `App.jsx`
 2. Create a new component that accepts the array and an `onChange` callback
 3. Implement add, update, delete, and reorder functions that replace the entire array
@@ -509,20 +472,19 @@ To create a new list component (attacks, items, spells, charges, etc.):
 Follow the pattern already used in Attacks.jsx, Charges.jsx, Equipment.jsx, etc.
 
 #### Adding a New Page
-To add a new major section of the character sheet:
-1. Add a new property to the `character` state in `App.jsx`
+1. Add a new property to the `character` state in `App.jsx` if needed
 2. Create the component file(s) in `src/components/`
-3. Add a navigation link in `Sidebar.jsx` with a new page name
-4. Add a conditional render block in `App.jsx` that shows the component when `currentPage` matches
+3. Add a navigation link in `Sidebar.jsx` with a new `currentPage` value
+4. Add a conditional render block in `App.jsx` (`{currentPage === '...' && ...}`) that shows the component(s)
 5. The new component receives its data and the `onChange` callback like all others
 
 ### Code Organization Patterns
 
 **Common UI Patterns:**
-- Input sections use the `.info-group` class for label-input styling - see CharacterBasicInfo and Backstory
-- List items use up/down/delete button patterns - used in Attacks, Charges, and Equipment
-- Calculations use `useMemo` for optimization - found in Attributes and SavesAndSkills
-- Spells.jsx includes a nested `SpellLevel` component that handles logic differences between cantrips and leveled spells
+- Input sections use the `.info-group` / `.form-group` classes for label-input styling
+- List items use up/down/delete button patterns (`.action-buttons`) - used in Attacks, Actions, Charges, Equipment, Spells
+- Calculations use `useMemo` for optimization - found in Attributes, SavesAndSkills, Attacks, Actions
+- Spells.jsx includes a nested `SpellLevel` component that handles the differences between cantrips and leveled spells
 
 **State Structure Conventions:**
 - State properties use camelCase naming
@@ -535,106 +497,56 @@ To add a new major section of the character sheet:
 ## Styling System
 
 ### CSS Architecture
-- **Global Styles** in `index.css` - CSS variables, base styles
-- **App Styles** in `App.css` - Main layout, components, utilities
-- **Component Styles** in dedicated CSS files when needed (e.g., `ConfirmModal.css`)
+- **Global Styles** in `index.css` - CSS variables, base element styles (inputs, checkboxes, buttons, `.locked-field`/`.auto-filled`)
+- **App Styles** in `App.css` - Layout, sidebar, cards, and nearly all component-specific styling
+- **Component Styles** - Only `ConfirmModal.css` exists as a separate file; every other component's styles live in `App.css`
 
-### CSS Variables (Common Tokens)
-Look in `index.css` for:
-- `--bg-primary`, `--bg-secondary` - Background colors
-- `--text-light`, `--text-dark` - Text colors
-- `--accent` - Accent color (gold for D&D theme)
-- `--border`, `--shadow` - UI element styling
+See [BRANDING.md](BRANDING.md) for the full color palette and the rules for reusing tokens (no new color variables for minor variations — use `filter: brightness()` and `opacity` instead).
 
 ### Key Classes
 - `.card` - Container for sections (padding, border, background)
 - `.section-title` - Section headings
-- `.info-group` - Label + input pair with floating label animation
-- `.auto-filled` - Special styling for calculated/read-only fields
+- `.info-group` / `.form-group` - Label + input pair
+- `.auto-filled` / `.locked-field` - Styling for calculated/read-only fields (gold outline, dimmed background)
 - `.two-column-layout` - Two-column grid layout
-- `.action-buttons` - Group of control buttons (move, delete)
+- `.action-buttons` - Group of move-up/move-down/delete controls
 - `.sidebar`, `.sidebar.open` - Sidebar styling and animation
 - `.page` - Page container for routing
 
 ### Responsive Design
 - Mobile-first approach
-- Sidebar slides from left on mobile
-- Grid layouts adapt to screen size
-- Uses media queries in CSS
+- Sidebar slides from left on mobile, with an overlay
+- Grid layouts adapt to screen size via media queries in `App.css`
 
 ---
 
-## Implementation Patterns
+## Known Quirks & Dead Code
 
-### How Features Are Structured
+Worth knowing before you touch the header stats, spellcasting math, or `basicInfo`:
 
-Every feature in this application follows consistent patterns:
-
-**Simple Fields** (like character name, alignment, etc.):
-- Defined in the state object with an empty string or default value
-- Rendered with an input element that uses `onChange` callback
-- Automatically saved by the auto-save mechanism
-
-**Calculated Fields** (like proficiency bonus, passive perception):
-- Defined as functions within the component that compute from other values
-- Wrapped with `useMemo` to prevent unnecessary recalculations
-- Rendered as read-only inputs with the `auto-filled` CSS class
-- Automatically update when their dependencies change
-
-**Dynamic Lists** (attacks, spells, equipment, charges):
-- Stored as arrays in the state object
-- Each item has a unique `id` for React keys
-- Include add, update, delete, and reorder functions
-- Replace entire array when items change via `onChange` callback
-- Support move-up/move-down buttons for reordering
-
-Examples of each pattern: Simple fields in CharacterBasicInfo, calculated fields in Attributes, dynamic lists in Attacks/Equipment/Charges/Spells.
-
-**Multi-Section Pages:**
-- Managed by the `currentPage` state in App.jsx
-- Navigation in Sidebar.jsx triggers page changes
-- Each page component receives its data section and `onChange` callback
-- Examples: Attributes page (multiple components), Equipment page, Backstory page
-
----
-
-## Development Reference
-
-### Debugging Tips
-- **Check Console:** Auto-save logs messages, errors show here
-- **LocalStorage:** Open DevTools → Application → Local Storage → `dnd_character_sheet_autosave`
-- **State:** Use browser React DevTools to inspect component props and state
-- **Save Backup:** Download current character to backup file for testing
-
-### Performance Considerations
-- Components use `useMemo` for expensive calculations
-- Debounced auto-save prevents excessive localStorage writes
-- Immutable state updates keep React re-renders efficient
-- Large arrays (spells, items) are handled efficiently with key-based list updates
+- **Unused `basicInfo` fields:** `level`, `levelTwo`, `playerName`, `alignment`, `deity` are all defined in `getDefaultState()` but have no corresponding input anywhere in the component tree. If you're asked to add a player-name or alignment field, the state slot already exists — just wire up the UI.
+- **`topBar.initiative` is manual, not calculated:** `CharacterBasicInfo.jsx` computes `const initiative = calculateMod(attributes?.dex || 10)` but never uses that variable — the rendered Initiative field is a plain editable input bound to `topBar.initiative`. If initiative is supposed to auto-calculate from DEX, that wiring needs to be added; don't assume it already works.
+- **`topBar.spellDC` is write-only:** `SavesAndSkills.jsx` calculates a spell DC and pushes it into `topBar.spellDC`, but nothing reads that state field. The Spell DC actually shown to the user (on the Spells page) is computed independently by `Spells.jsx` from the same inputs. The two calculations should currently agree in value, but they are two separate code paths, not one shared source of truth.
+- **`calculateSpellBonus` in `SavesAndSkills.jsx` is dead code:** it's computed but never rendered or written to state.
+- **`mergeWithDefaults` doesn't deep-merge arrays:** an uploaded/saved array (e.g. `attacks`, `spells.cantrips`) is taken as-is if present at all, not merged item-by-item against the default shape. A missing array falls back to the default (usually `[]`); a malformed item inside a present array is not repaired.
+- **This doc was previously out of date** on the page-routing structure (it described a page layout that no longer matches `App.jsx`/`Sidebar.jsx`) and on several component descriptions and file line-counts. If something here ever looks inconsistent with the source, trust the source — `App.jsx` and `Sidebar.jsx` in particular — over this document, and update this file when you find the drift.
 
 ---
 
 ## Summary
 
-This D&D Character Sheet application is built with **React 18** and **Vite**, using a **centralized state management** pattern with **component-based architecture**. 
+This D&D Character Sheet application is built with **React 18** and **Vite**, using a **centralized state management** pattern with **component-based architecture**.
 
 **Key Technical Decisions:**
 1. **Single centralized state** - Easier to manage and persist
 2. **Path-based updates** - Flexible, allows deep nesting without boilerplate
 3. **Auto-save with debounce** - User never loses data, no manual save button
-4. **Component composition** - Each section is independent, easy to test/refactor
+4. **Component composition** - Each section is independent, easy to modify
 5. **Immutable state** - Prevents bugs, enables React optimization
-
-**Architecture provides:**
-- **Extensibility** - New fields/sections follow the existing patterns
-- **Data persistence** - Auto-save and backup/restore without manual intervention
-- **Maintainability** - Clear component responsibilities and predictable data flow
-- **User experience** - No data loss, instant feedback, offline-capable
 
 **When working with this codebase:**
 - Use the component patterns as templates when modifying or extending features
 - Follow the state structure conventions closely to maintain consistency
-- Leverage `useMemo` and `useCallback` for expensive operations
-- Test thoroughly after changing state structure (especially backup/load)
-- Keep styling consistent with existing CSS variables and classes
-
+- Test thoroughly after changing state structure (especially backup/load, since `mergeWithDefaults` behavior around arrays is easy to get wrong)
+- Keep styling consistent with the CSS variables and classes in [BRANDING.md](BRANDING.md)
+- Re-verify anything in this doc against the actual source before relying on it for something structural — see [Known Quirks](#known-quirks--dead-code)

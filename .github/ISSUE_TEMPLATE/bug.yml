@@ -1,0 +1,50 @@
+name: Bug
+description: Something behaves differently from how it should
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        This issue is the entry point of the dev cycle — see docs/workflow.md. An agent
+        (or you) reads it before touching any code, so the more of the boxes below are
+        filled in, the less of that time is spent guessing.
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: What should happen
+      placeholder: Toggling a skill's proficiency box updates its modifier immediately.
+    validations:
+      required: true
+
+  - type: textarea
+    id: actual
+    attributes:
+      label: What actually happens
+      placeholder: The modifier only updates after switching pages and back.
+    validations:
+      required: true
+
+  - type: dropdown
+    id: module
+    attributes:
+      label: Module
+      description: Which page or area. See the page-routing table in CLAUDE.md if you're not sure which `currentPage` value owns a screen.
+      options:
+        - attributes (Attributes, Saves & Skills, Proficiencies, Features & Traits)
+        - actions (Status, Attacks, Actions, Charges)
+        - equipment (Inventory)
+        - spells (Spell Sheet)
+        - notes (Notes, Backstory)
+        - infra (build, state/autosave, styling, CI)
+        - not sure
+    validations:
+      required: true
+
+  - type: textarea
+    id: repro
+    attributes:
+      label: How to reproduce
+      description: Numbered steps. Say whether it happens on a blank sheet or only with existing saved data.
+    validations:
+      required: true
