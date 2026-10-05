@@ -1,0 +1,46 @@
+name: Enhancement
+description: New behaviour, or a change to how something works
+labels: ["enhancement"]
+body:
+  - type: textarea
+    id: want
+    attributes:
+      label: What you want to be able to do
+      description: Describe it as the thing you're trying to accomplish, not the UI you imagine.
+      placeholder: Hide cantrips and low-level spells I've already prepared without deleting them.
+    validations:
+      required: true
+
+  - type: dropdown
+    id: module
+    attributes:
+      label: Module
+      options:
+        - attributes (Attributes, Saves & Skills, Proficiencies, Features & Traits)
+        - actions (Status, Attacks, Actions, Charges)
+        - equipment (Inventory)
+        - spells (Spell Sheet)
+        - notes (Notes, Backstory)
+        - infra (build, state/autosave, styling, CI)
+        - not sure
+    validations:
+      required: true
+
+  - type: textarea
+    id: today
+    attributes:
+      label: What you do today instead
+      description: The workaround, if there is one. Usually the best argument for the change.
+    validations:
+      required: false
+
+  - type: checkboxes
+    id: scope
+    attributes:
+      label: Scope
+      options:
+        - label: >-
+            This adds or changes a field in the character's saved data (getDefaultState() in
+            src/App.jsx) — flag it so gate 1 rates it appropriately; see the risk ladder in
+            docs/workflow.md.
+          required: false

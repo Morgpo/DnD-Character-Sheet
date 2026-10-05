@@ -1,0 +1,49 @@
+name: Half-built feature
+description: Reads as finished, but isn't
+labels: ["half-built"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        For things that look done from the outside. This repo already has a few of these —
+        see "Known Quirks & Dead Code" in docs/PROJECT_DOCUMENTATION.md before filing, in
+        case it's one of the known ones (e.g. Initiative isn't actually auto-calculated).
+        The gap between the two boxes below is the whole issue.
+
+  - type: textarea
+    id: appears
+    attributes:
+      label: What it looks like it does
+    validations:
+      required: true
+
+  - type: textarea
+    id: actual
+    attributes:
+      label: What it actually does
+      placeholder: The field exists in getDefaultState() but no component renders an input for it.
+    validations:
+      required: true
+
+  - type: dropdown
+    id: module
+    attributes:
+      label: Module
+      options:
+        - attributes (Attributes, Saves & Skills, Proficiencies, Features & Traits)
+        - actions (Status, Attacks, Actions, Charges)
+        - equipment (Inventory)
+        - spells (Spell Sheet)
+        - notes (Notes, Backstory)
+        - infra (build, state/autosave, styling, CI)
+        - not sure
+    validations:
+      required: true
+
+  - type: textarea
+    id: finish
+    attributes:
+      label: What finishing it would mean
+      description: Optional. If you already know the shape of the fix, say so.
+    validations:
+      required: false

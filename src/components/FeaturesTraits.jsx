@@ -31,12 +31,12 @@ export default function FeaturesTraits({ data, onChange }) {
           />
         </div>
         <div className="feature-item">
-          <label>Background Features</label>
+          <label>Misc Features</label>
           <textarea
             value={data.backgroundFeatures || ''}
             onChange={(e) => onChange('features.backgroundFeatures', e.target.value)}
             rows="4"
-            placeholder="Feature from your background"
+            placeholder="Other notable traits, features, or abilities not covered above."
           />
         </div>
       </div>

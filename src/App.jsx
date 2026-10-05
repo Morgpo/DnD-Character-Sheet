@@ -220,6 +220,42 @@ function App() {
     })
   }, [])
 
+  const toggleSpellSlot = useCallback((level, index) => {
+    setCharacter(prev => {
+      const prevSlots = prev.spells?.slots || {}
+      const prevSlotCounts = prev.spells?.slotCounts || {}
+      const slots = Array.from(prevSlots[level] || [])
+      const configuredCount = parseInt(prevSlotCounts[level], 10)
+      const targetLength = Math.max(slots.length, Number.isFinite(configuredCount) ? configuredCount : 0, index + 1)
+
+      while (slots.length < targetLength) {
+        slots.push(false)
+      }
+
+      const isChecked = Boolean(slots[index])
+      if (isChecked) {
+        for (let i = index; i < slots.length; i += 1) {
+          slots[i] = false
+        }
+      } else {
+        for (let i = 0; i <= index; i += 1) {
+          slots[i] = true
+        }
+      }
+
+      return {
+        ...prev,
+        spells: {
+          ...prev.spells,
+          slots: {
+            ...prevSlots,
+            [level]: slots
+          }
+        }
+      }
+    })
+  }, [])
+
   const saveBackup = () => {
     try {
       const dataStr = JSON.stringify(character, null, 2)
@@ -383,6 +419,9 @@ function App() {
           <div className="page">
             <Status
               data={character.status}
+              spellSlots={character.spells.slots}
+              slotCounts={character.spells.slotCounts}
+              onSlotToggle={toggleSpellSlot}
               onChange={updateCharacter}
             />
             <Attacks
