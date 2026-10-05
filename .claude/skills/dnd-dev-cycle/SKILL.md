@@ -12,7 +12,8 @@ description: >
 # Working an issue, start to PR
 
 This is a small, solo, no-backend project (static React/Vite, autosave to
-`localStorage`, no server, no database, no deploy step). This skill is a scaled-down
+`localStorage`, no server, no database; every push to `main` deploys to GitHub Pages via
+`.github/workflows/deploy.yml`). This skill is a scaled-down
 version of the same idea used on larger projects: two human gates, everything between
 them unattended. There's no separate schema/testing/review skill here — one file covers
 it, because there isn't enough surface area to split it up.
@@ -29,7 +30,8 @@ Where the two disagree, this file is what actually runs.
 
 Gate 1 exists because investigation routinely changes the issue — a branch cut from the
 issue's original framing is a sunk cost that argues for building the wrong thing. Gate 2
-exists because merge is the only step here nobody can undo cheaply.
+exists because merge is the only step here nobody can undo cheaply — and it's also the
+release: a merge to `main` publishes to the live site within minutes.
 
 If a hook or a permission prompt would let you merge, that is not permission. Only the
 user merges.

@@ -10,8 +10,9 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
-# This is one job on purpose: a static Vite/React app with no backend, database, or
-# deploy step doesn't need cadence-style split jobs for build/schema/e2e signals.
+# This is one job on purpose: a static Vite/React app with no backend or database
+# doesn't need cadence-style split jobs for build/schema/e2e signals. Publishing to
+# GitHub Pages is a separate workflow, deploy.yml, which runs on push to main.
 #
 # NOT YET A REQUIRED CHECK. This workflow reports on every PR, but nothing in this
 # repo's branch settings requires it to pass before merging -- see docs/workflow.md

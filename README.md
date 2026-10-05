@@ -2,6 +2,8 @@
 
 A web-based character sheet for Dungeons & Dragons 5th Edition. Built with React and Vite, it runs entirely in the browser: character data autosaves to `localStorage`, and can be exported to / imported from a JSON backup file.
 
+**Live at [morgpo.github.io/DnD-Character-Sheet](https://morgpo.github.io/DnD-Character-Sheet/).**
+
 Originally forked from [Chee32/5e-Character-Sheet](https://github.com/Chee32/5e-Character-Sheet) by [@Chee32](https://github.com/Chee32) and [@lckynmbrsvn](https://github.com/lckynmbrsvn), then rebuilt in React by [@Morgpo](https://github.com/Morgpo).
 
 ## Features
@@ -30,6 +32,10 @@ npm run build     # production build, output in dist/
 npm run preview   # preview the production build
 npm test          # run the test suite
 ```
+
+## Deployment
+
+Every push to `main` is tested, built, and published to GitHub Pages by [.github/workflows/deploy.yml](.github/workflows/deploy.yml). There are no branch previews — use `npm run build && npm run preview` to check a branch locally.
 
 ## Saving & loading
 

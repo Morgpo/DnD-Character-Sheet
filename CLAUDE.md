@@ -15,6 +15,8 @@ npm run test:watch # Vitest in watch mode
 
 There is no linter configured. Tests use Vitest + React Testing Library, set up in [vite.config.js](vite.config.js) (a `test` block, not a separate config file) with matchers loaded from [src/test/setup.js](src/test/setup.js). Coverage is intentionally thin — a handful of smoke tests for page routing, save-data resilience, and the calculation-heavy components (see [src/App.test.jsx](src/App.test.jsx), [src/components/Attributes.test.jsx](src/components/Attributes.test.jsx), [src/components/Attacks.test.jsx](src/components/Attacks.test.jsx)) — not exhaustive coverage of every component.
 
+Deployment: every push to `main` runs [.github/workflows/deploy.yml](.github/workflows/deploy.yml) (test, build, publish `dist/` to GitHub Pages at `https://morgpo.github.io/DnD-Character-Sheet/`), so merging a PR is a release. The site is served under the `/DnD-Character-Sheet/` subpath, which is why [vite.config.js](vite.config.js) sets `base: './'` — keep built asset paths relative, or the deployed page loads blank.
+
 ## Working an issue
 
 There's an issue-driven dev cycle for non-trivial changes: file (or read) a GitHub issue

@@ -1,0 +1,73 @@
+name: Deploy to GitHub Pages
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+# Every push to main publishes to https://morgpo.github.io/DnD-Character-Sheet/ --
+# merging a PR is the release. There are no branch or PR previews; check a branch
+# locally with `npm run build && npm run preview`.
+#
+# Tests run here as well as in ci.yml's Verify job because Verify only runs on pull
+# requests and isn't a required check yet (see docs/workflow.md), so a direct push to
+# main would otherwise publish without them. A red run here blocks the deploy, not
+# the merge -- the previous build stays live until a green run replaces it.
+#
+# Pages must be set to "GitHub Actions" as its source (Settings -> Pages), or the
+# deploy job fails. vite.config.js sets `base: './'` so the built asset paths work
+# under the /DnD-Character-Sheet/ subpath; keep it relative.
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# One deploy at a time, and a queued one is never cancelled mid-publish.
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Configure Pages
+        uses: actions/configure-pages@v6
+
+      - name: Install
+        run: npm ci
+
+      - name: Test
+        run: npm test
+
+      - name: Build
+        run: npm run build
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v5
+        with:
+          path: dist
+
+  deploy:
+    name: Deploy
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v5
