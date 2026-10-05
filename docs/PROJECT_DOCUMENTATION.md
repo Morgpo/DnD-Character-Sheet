@@ -59,6 +59,9 @@ npm test            # Run the test suite once
 npm run test:watch  # Run it in watch mode
 ```
 
+### Deployment
+Every push to `main` runs `.github/workflows/deploy.yml`, which tests, builds, and publishes `dist/` to GitHub Pages at https://morgpo.github.io/DnD-Character-Sheet/. `vite.config.js` sets `base: './'` so asset paths stay relative under that subpath. See `docs/workflow.md` ("What ships, and when") for failure and rollback behaviour.
+
 ---
 
 ## Architecture

@@ -7,8 +7,8 @@ is a bug in this one.
 
 This is a scaled-down version of the same idea used on bigger projects: an agent
 investigates, a human approves, the agent does the work, a human merges. There's no
-backend here and no production host, so there's no schema-migration skill, no deploy
-script, and no multi-job CI — just a static app, its saved-data shape, and a test suite.
+backend here, so there's no schema-migration skill, no deploy script, and no multi-job
+CI — just a static app on GitHub Pages, its saved-data shape, and a test suite.
 
 ## The shape of it
 
@@ -157,13 +157,32 @@ you:
   suite loads today. Try it by hand with a real backup JSON (there's a sample under
   `.backups/`) if the change touches state shape.
 
-Then merge.
+Then merge — and the merge ships it (next section).
+
+## What ships, and when
+
+Every push to `main` runs [`../.github/workflows/deploy.yml`](../.github/workflows/deploy.yml):
+`npm ci`, `npm test`, `npm run build`, then publishes `dist/` to
+**https://morgpo.github.io/DnD-Character-Sheet/**, usually within a minute or two of the
+merge. There's no separate release step — merging a PR is the release.
+
+- **A failing test stops the deploy, not the merge.** The previous build stays live until
+  a green run replaces it. The fix's own push to `main` redeploys; the Actions tab's
+  "Run workflow" button (`workflow_dispatch`) re-runs it by hand.
+- **Rolling back is a revert.** Revert the commit on `main` and the revert's push
+  redeploys the previous code.
+- **Saved characters live in the visitor's browser, per site.** Nothing about a deploy
+  touches them — but a `getDefaultState()` change reaches every saved character the
+  next time its owner opens the site, which is why that's the `high` rung of the risk
+  ladder.
+- **Pages must stay set to "GitHub Actions"** as its source (Settings → Pages), and
+  `vite.config.js` must keep `base: './'` — the site is served under
+  `/DnD-Character-Sheet/`, not at the domain root.
 
 ## What this flow does not do
 
-- **It does not deploy anywhere.** There is no hosting configured for this app yet.
-  Merging to `main` doesn't publish anything; if you add hosting later (GitHub Pages,
-  Netlify, etc.), add a line here about what ships and when.
+- **It does not preview a branch.** Only `main` is published. Check a branch locally with
+  `npm run build && npm run preview`.
 - **It does not close issues on its own.** The `Closes #<n>` link does, on merge. An
   agent does not close one by hand.
 - **It does not test what nobody wrote a test for.** `npm test` is exactly as good as
